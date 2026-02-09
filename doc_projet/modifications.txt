@@ -58,4 +58,8 @@ Ce document répertorie les décisions techniques et fonctionnelles prises duran
 58→    - **Déploiement & Cloud :**
 59→        - **Frontend (Vercel) :** Configuration optimisée pour Next.js 15, validation de l'accessibilité et du Design System.
 60→        - **Backend (Render) :** Création d'un `Dockerfile` multi-stage optimisé pour NestJS et Prisma (Node 22-alpine). Ajout d'un `.dockerignore` pour exclure les fichiers inutiles. Configuration du port dynamique via `process.env.PORT`.
-61→    - **Documentation :** Mise à jour continue du journal des modifications pour assurer la traçabilité complète des choix techniques.
+61→        - **Configuration Cloud & Sécurité :**
+            - Correction critique de la syntaxe des variables d'environnement dans les fichiers `.env` (frontend et backend) : suppression des crochets autour des mots de passe de la base de données pour assurer la compatibilité avec le driver PostgreSQL/Prisma.
+            - Mise à jour des configurations de déploiement Render (`render.yaml`) et Docker (`Dockerfile`) pour inclure les correctifs de permissions et de dépendances système (`openssl`).
+            - Recommandation d'utilisation du **Connection Pooler** (port 6543) de Supabase pour les déploiements sur Render afin de garantir la stabilité des connexions dans un environnement Docker.
+    - **Documentation :** Mise à jour continue du journal des modifications pour assurer la traçabilité complète des choix techniques.
