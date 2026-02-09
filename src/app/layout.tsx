@@ -32,7 +32,7 @@ export default function RootLayout({
       >
         <ReduxProvider>
           <Header />
-          <main className="flex-grow pt-20">
+          <main className="grow pt-20">
             {children}
           </main>
           <Footer />

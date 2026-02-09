@@ -9,7 +9,7 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-4 h-auto md:h-[600px]">
           {/* Tuile XL - Direct (Main) */}
           <div className="md:col-span-2 md:row-span-2 bg-text-deep rounded-3xl p-8 relative overflow-hidden group shadow-xl">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent opacity-50"></div>
+            <div className="absolute inset-0 bg-linear-to-br from-primary/20 to-transparent opacity-50"></div>
             <div className="relative z-10 h-full flex flex-col justify-end">
               <div className="flex items-center space-x-2 mb-4">
                 <span className="flex h-3 w-3 relative">
@@ -47,7 +47,7 @@ export default function Home() {
                   <h3 className="text-xl font-bold text-white mb-2">Jeunesse & Cinéma</h3>
                   <p className="text-white/70 text-sm mb-4">Découvrez nos derniers courts-métrages inspirants.</p>
                   <Button variant="link" className="text-white p-0 hover:text-white/80">
-                    Découvrir →
+                    Découvrir &rarr;
                   </Button>
                </div>
             </div>
@@ -60,7 +60,7 @@ export default function Home() {
                <div className="w-full bg-muted rounded-full h-2 mb-2">
                   <div className="bg-primary h-2 rounded-full w-[65%]"></div>
                </div>
-               <span className="text-xs text-text-deep/60 font-medium">65% de l'objectif atteint</span>
+               <span className="text-xs text-text-deep/60 font-medium">65% de l&apos;objectif atteint</span>
             </div>
             <Button variant="outline" className="rounded-xl border-primary text-primary hover:bg-primary/5 text-xs">
                Contribuer
@@ -74,10 +74,10 @@ export default function Home() {
                   <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.437.917-4.012 3.638-4.012 5.849h3.999v10h-9.987z" />
                </svg>
                <p className="text-text-deep font-medium text-sm line-clamp-3">
-                  "Ma vie a été totalement transformée après avoir visionné l'enseignement sur la délivrance..."
+                  &quot;Ma vie a été totalement transformée après avoir visionné l&apos;enseignement sur la délivrance...&quot;
                </p>
             </div>
-            <span className="text-xs font-bold text-primary">Lire la suite →</span>
+            <span className="text-xs font-bold text-primary">Lire la suite &rarr;</span>
           </div>
         </div>
       </section>

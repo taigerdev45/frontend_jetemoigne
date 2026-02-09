@@ -271,3 +271,25 @@ CREATE POLICY "Admin: Configurer site" ON public.app_settings FOR UPDATE USING (
 -- Bucket: transaction-proofs
 -- INSERT: Public
 -- SELECT: Staff avec accès financier
+
+-- Insertion des Buckets
+INSERT INTO storage.buckets (id, name, public) VALUES ('testimonies-media', 'testimonies-media', true);
+INSERT INTO storage.buckets (id, name, public) VALUES ('transaction-proofs', 'transaction-proofs', false);
+INSERT INTO storage.buckets (id, name, public) VALUES ('books-files', 'books-files', true);
+INSERT INTO storage.buckets (id, name, public) VALUES ('public-assets', 'public-assets', true);
+
+-- POLICIES STORAGE: testimonies-media (Public Read, Public Insert)
+CREATE POLICY "Public: Voir medias" ON storage.objects FOR SELECT USING (bucket_id = 'testimonies-media');
+CREATE POLICY "Public: Upload medias" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'testimonies-media');
+
+-- POLICIES STORAGE: transaction-proofs (Staff only Select, Public Insert)
+CREATE POLICY "Finance: Voir preuves" ON storage.objects FOR SELECT USING (bucket_id = 'transaction-proofs' AND public.has_financial_access());
+CREATE POLICY "Public: Upload preuves" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'transaction-proofs');
+
+-- POLICIES STORAGE: books-files (Public Read, Staff Manage)
+CREATE POLICY "Public: Lire livres" ON storage.objects FOR SELECT USING (bucket_id = 'books-files');
+CREATE POLICY "Staff: Gestion livres" ON storage.objects FOR ALL USING (bucket_id = 'books-files' AND public.is_staff_member());
+
+-- POLICIES STORAGE: public-assets (Public Read, Staff Manage)
+CREATE POLICY "Public: Lire assets" ON storage.objects FOR SELECT USING (bucket_id = 'public-assets');
+CREATE POLICY "Staff: Gestion assets" ON storage.objects FOR ALL USING (bucket_id = 'public-assets' AND public.is_staff_member());

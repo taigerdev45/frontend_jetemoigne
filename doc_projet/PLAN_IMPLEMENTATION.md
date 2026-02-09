@@ -12,16 +12,16 @@ Ce document détaille chaque étape technique pour la réalisation de la platefo
 - [x] State Management : Setup de Redux Toolkit pour la gestion globale.
 
 ### 1.2 Architecture de la Base de Données (Supabase)
-- [ ] Création du projet Supabase.
-- [ ] Exécution du script `schema.sql` (Enums, Tables, RLS).
-- [ ] Configuration des Buckets Storage : `testimonies-media`, `transaction-proofs`, `books-files`, `public-assets`.
+- [x] Création du projet Supabase.
+- [x] Exécution du script `schema.sql` (Enums, Tables, RLS).
+- [x] Configuration des Buckets Storage : `testimonies-media`, `transaction-proofs`, `books-files`, `public-assets`.
 - [x] Setup Prisma : `npx prisma init`, configuration du provider PostgreSQL et synchronisation du schéma.
 
 ### 1.3 Socle Backend (NestJS)
-- [ ] Initialisation NestJS : `nest new backend`.
-- [ ] Intégration Prisma Service.
-- [ ] Configuration Swagger pour la documentation API.
-- [ ] Setup du module Auth avec Passport et JWT.
+- [x] Initialisation NestJS : `nest new backend`.
+- [x] Intégration Prisma Service.
+- [x] Configuration Swagger pour la documentation API.
+- [x] Setup du module Auth avec Passport et JWT.
 
 ---
 

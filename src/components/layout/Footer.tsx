@@ -14,7 +14,7 @@ const Footer = () => {
             <span className="font-bold text-lg tracking-tight">JETEMOIGNE-TV</span>
           </div>
           <p className="text-white/60 text-sm leading-relaxed">
-            La plateforme chrétienne dédiée aux témoignages, à l'évangélisation et à la transformation des vies à travers le monde.
+            La plateforme chrétienne dédiée aux témoignages, à l&apos;évangélisation et à la transformation des vies à travers le monde.
           </p>
         </div>
 
