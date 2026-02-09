@@ -1,0 +1,21 @@
+PROGRÈS DU PROJET JETEMOIGNE-TV
+
+[X] Brainstorming & PRD (doc_projet/PRD.md)
+[X] Plan d'Implémentation Détaillé (doc_projet/PLAN_IMPLEMENTATION.md)
+[X] Fichier Contexte Projet (doc_projet/CONTEXTE_PROJET.md)
+[X] Schéma SQL Complet (doc_projet/schema.sql)
+[X] Initialisation Next.js 15 (TypeScript, Tailwind, App Router)
+[X] Configuration du Thème "Blue Clarity" (Tokens Tailwind)
+[X] Installation & Config Shadcn/UI (Rounded-2xl, Shadow-blue)
+[X] Setup Redux Toolkit & Provider
+[X] Initialisation Prisma & Schéma (ORM)
+[X] Configuration Supabase (Env, Client)
+[X] Développement du Layout Global (Header/Footer Glassmorphism)
+[X] Développement de la Page d'Accueil (Bento Grid Hero)
+[X] Séparation des dépôts (frontend_jetemoigne & backend_jetemoigne)
+[X] Initialisation Backend NestJS (Prisma, Supabase)
+[ ] Configuration RLS & Storage Buckets sur Supabase
+[ ] Setup Prisma & NestJS Backend (Initialisation & Services)
+[ ] Phase 2.3 : Interface Direct & Programmes
+[ ] Phase 2.4 : Système de Témoignages (Workflow)
+[ ] Phase 3 : Interface Admin "Blue Control"

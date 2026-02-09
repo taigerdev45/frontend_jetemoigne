@@ -1,0 +1,31 @@
+# LOG DES MODIFICATIONS & RAFFINEMENTS (Hors Cahier des Charges Initial)
+
+Ce document répertorie les décisions techniques et fonctionnelles prises durant la phase de brainstorming qui complètent ou précisent le cahier des charges initial.
+
+## 1. Architecture & Infrastructure
+- **Choix de Supabase :** Migration d'une infrastructure PostgreSQL classique vers Supabase pour bénéficier nativement de :
+    - **GoTrue (Auth) :** Gestion simplifiée des profils et rôles.
+    - **PostgREST :** API temps réel pour le Dashboard Admin.
+    - **Supabase Storage :** Gestion des buckets avec politiques RLS.
+- **Next.js 15 (App Router) :** Utilisation de la version la plus récente pour bénéficier des optimisations de rendu serveur (RSC) et de la gestion simplifiée des formulaires (Server Actions).
+
+## 2. Base de Données & Sécurité (SQL)
+- **Fonctions Helpers SQL :** Création de 3 fonctions de sécurité personnalisées pour simplifier les Policies :
+    - `is_staff_member()` : Regroupe tous les rôles admin/manager.
+    - `is_admin_or_super()` : Accès critique.
+    - `has_financial_access()` : Accès restreint aux comptables et admins.
+- **Enum `content_format` :** Ajout de la valeur `image` pour couvrir les besoins des publicités fixes.
+- **Table `analytics_daily` :** Ajout d'une table consolidée pour éviter les calculs lourds en temps réel sur le Dashboard.
+- **Table `app_settings` :** Ajout d'une contrainte `single_row` pour garantir qu'il n'existe qu'une seule configuration globale.
+
+## 3. Stockage (Supabase Storage)
+- **Définition des Buckets :**
+    - `transaction-proofs` : Paramétré en **accès privé** (Staff financier uniquement).
+    - `testimonies-media` : Utilisation recommandée de **Signed URLs** pour la lecture avant validation.
+
+## 4. Fonctionnalités & Logique Métier
+- **Workflow Témoignages :** Précision du statut `programme` pour permettre l'affichage automatique à une date ultérieure.
+- **Règles de Preuve :** Introduction d'une logique de checkbox dans les paramètres pour activer/désactiver l'obligation de capture d'écran selon le type de transaction (Dons vs Pubs/Ouvrages).
+
+## 5. Organisation du Projet
+- **Dossier `doc_projet` :** Création d'un répertoire dédié pour centraliser toute la documentation technique et stratégique (PRD, Plan, Schéma, Log).
