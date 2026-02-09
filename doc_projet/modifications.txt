@@ -53,4 +53,9 @@ Ce document répertorie les décisions techniques et fonctionnelles prises duran
             - Échappement des caractères spéciaux HTML (`&apos;`, `&quot;`) dans `page.tsx` et `Footer.tsx`.
             - Remplacement des flèches texte (`→`) par des entités HTML (`&rarr;`) pour une meilleure accessibilité et rendu.
         - Validation de la structure Glassmorphism et du Design System "Blue Clarity".
-    - **Documentation :** Mise à jour continue du journal des modifications pour assurer la traçabilité complète des choix techniques.
+56→    - **SuperAdmin & Provisioning :**
+57→        - Génération d'un script SQL complet pour le provisioning manuel du SuperAdmin (`TAIGER`) directement dans Supabase. Le script couvre l'insertion dans `auth.users` (pour l'authentification) et `public.profiles` (pour les rôles et permissions applicatives) en utilisant l'UUID `4963eff1-7133-450f-a953-643d222d04b7`.
+58→    - **Déploiement & Cloud :**
+59→        - **Frontend (Vercel) :** Configuration optimisée pour Next.js 15, validation de l'accessibilité et du Design System.
+60→        - **Backend (Render) :** Création d'un `Dockerfile` multi-stage optimisé pour NestJS et Prisma (Node 22-alpine). Ajout d'un `.dockerignore` pour exclure les fichiers inutiles. Configuration du port dynamique via `process.env.PORT`.
+61→    - **Documentation :** Mise à jour continue du journal des modifications pour assurer la traçabilité complète des choix techniques.
