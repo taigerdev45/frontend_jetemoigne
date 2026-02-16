@@ -75,7 +75,7 @@ export function BooksCarousel() {
               <div className="group relative bg-white rounded-2xl border border-border p-4 hover:shadow-xl transition-all duration-300 h-full flex flex-col">
                 {/* Book Cover Placeholder */}
                 <div
-                  className={`aspect-[2/3] w-full rounded-xl mb-4 ${book.color} flex items-center justify-center relative overflow-hidden group-hover:scale-[1.02] transition-transform`}
+                  className={`aspect-2/3 w-full rounded-xl mb-4 ${book.color} flex items-center justify-center relative overflow-hidden group-hover:scale-[1.02] transition-transform`}
                 >
                   <BookOpen className="w-12 h-12 text-black/10" />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors"></div>

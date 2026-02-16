@@ -1,3 +1,8 @@
+## 7. UX & Transitions (Frontend)
+- **Intégration Framer Motion :**
+    - Création d'un composant client réutilisable `PageTransition.tsx` encapsulant `motion.div`.
+    - Implémentation via `template.tsx` (App Router) pour garantir le déclenchement des animations à chaque changement de route sans recharger le layout principal (Header/Footer).
+    - **Animation choisie :** "Fade In Up" (Opacité 0->1, Translation Y 20px->0px) pour une entrée fluide et élégante, cohérente avec le design system "Blue Clarity".
 
 ## 8. Composants Hero & Bento Grid (Frontend)
 - **Tuile Direct (LiveTile) :**
@@ -8,3 +13,19 @@
     - Création du composant `src/components/home/ProjectsTile.tsx`.
     - **Intégration UI :** Remplacement de la barre de progression HTML native par le composant `Progress` de Shadcn UI (`@radix-ui/react-progress`).
     - **Style :** Personnalisation de la barre avec `bg-secondary/20` (fond) et `bg-primary` (indicateur) pour respecter la charte "Blue Clarity".
+
+## 9. Section Pub & Carrousel Ouvrages (Frontend)
+- **Section Pub (AdsBanner) :**
+    - Implémentation du composant `AdsBanner.tsx` avec un dégradé `from-sky-400 to-blue-600` conformément au design "Blue Clarity".
+    - Ajout d'effets visuels (cercles flous en arrière-plan) pour le dynamisme.
+    - Bouton CTA "Nous Soutenir" responsive.
+- **Carrousel Ouvrages (BooksCarousel) :**
+    - Intégration de `embla-carousel-react` via le composant Shadcn UI `Carousel`.
+    - Création du composant `BooksCarousel.tsx` affichant une liste d'ouvrages fictifs.
+    - Mise en place d'une navigation fluide (flèches, loop infini) et d'un design de cartes avec effet hover.
+- **Mise à jour de la Page d'Accueil :**
+    - Réorganisation des sections : Hero -> Stats -> Pub -> Carrousel -> Partenaires.
+
+## 10. Correctifs & Optimisations (Linter)
+- **AdsBanner.tsx :** Correction des caractères non échappés (`'`) pour la compatibilité JSX.
+- **BooksCarousel.tsx :** Optimisation de la classe Tailwind `aspect-[2/3]` vers la syntaxe standard `aspect-2/3`.
