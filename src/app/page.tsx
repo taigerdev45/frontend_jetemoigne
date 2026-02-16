@@ -4,10 +4,52 @@ import { LiveTile } from "@/components/home/LiveTile";
 import { ProjectsTile } from "@/components/home/ProjectsTile";
 import { AdsBanner } from "@/components/home/AdsBanner";
 import { BooksCarousel } from "@/components/home/BooksCarousel";
+import { CategoryMarquee, MarqueeItem } from "@/components/home/CategoryMarquee";
+
+// --- DONNÉES MOCKÉES ---
+const LIVE_ITEMS: MarqueeItem[] = [
+  { id: "l1", title: "Culte en Direct - Église de Paris", subtitle: "Maintenant" },
+  { id: "l2", title: "Concert de Louange - Groupe Espoir", subtitle: "En Direct" },
+  { id: "l3", title: "Intercession Matinale", subtitle: "En Direct" },
+  { id: "l4", title: "Talk Show : La Foi au Quotidien", subtitle: "Rediffusion" },
+  { id: "l5", title: "Conférence : Guérison Divine", subtitle: "Bientôt" },
+];
+
+const PROGRAM_ITEMS: MarqueeItem[] = [
+  { id: "p1", title: "Étude sur l'Apocalypse", subtitle: "Enseignement" },
+  { id: "p2", title: "Les Héros de la Foi : David", subtitle: "Documentaire" },
+  { id: "p3", title: "Chants de Victoire Vol. 2", subtitle: "Musique" },
+  { id: "p4", title: "Débat : Science et Foi", subtitle: "Talk Show" },
+  { id: "p5", title: "Dessins Animés Bibliques", subtitle: "Jeunesse" },
+];
+
+const TESTIMONY_ITEMS: MarqueeItem[] = [
+  { id: "t1", title: "J'ai été guéri du cancer après la prière", subtitle: "Guérison" },
+  { id: "t2", title: "Délivré de l'alcoolisme après 20 ans", subtitle: "Délivrance" },
+  { id: "t3", title: "Dieu a restauré mon mariage brisé", subtitle: "Famille" },
+  { id: "t4", title: "J'ai retrouvé du travail miraculeusement", subtitle: "Provision" },
+  { id: "t5", title: "La paix de Dieu a inondé mon cœur", subtitle: "Paix" },
+];
+
+const PROJECT_ITEMS: MarqueeItem[] = [
+  { id: "pr1", title: "Construction d'un orphelinat à Abidjan", subtitle: "Humanitaire" },
+  { id: "pr2", title: "Distribution de Bibles en milieu rural", subtitle: "Évangélisation" },
+  { id: "pr3", title: "Soutien aux veuves et orphelins", subtitle: "Social" },
+  { id: "pr4", title: "Création d'une radio chrétienne locale", subtitle: "Média" },
+  { id: "pr5", title: "Aide d'urgence pour les réfugiés", subtitle: "Urgence" },
+];
+
+const PARTNER_ITEMS: MarqueeItem[] = [
+  { id: "pt1", title: "Librairie Chrétienne CLC", subtitle: "Partenaire" },
+  { id: "pt2", title: "Radio Phare FM", subtitle: "Média" },
+  { id: "pt3", title: "Mission Intérieure", subtitle: "Mission" },
+  { id: "pt4", title: "TopChrétien", subtitle: "Web" },
+  { id: "pt5", title: "Alliance Biblique Française", subtitle: "Institution" },
+];
 
 export default function Home() {
   return (
-    <div className="flex flex-col gap-20 pb-20">
+    <div className="flex flex-col gap-16 pb-0 overflow-x-hidden">
       {/* Hero Section - Bento Grid */}
       <section className="px-6 pt-10 max-w-7xl mx-auto w-full">
         <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-4 h-auto md:h-[600px]">
@@ -52,6 +94,55 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Section Bandes Défilantes (Carrousels par Interface) */}
+      <section className="flex flex-col gap-8 w-full border-t border-border/50 bg-muted/20 py-10">
+        
+        {/* Bande Direct */}
+        <CategoryMarquee 
+          title="En Direct & Replay" 
+          items={LIVE_ITEMS} 
+          speed="normal" 
+          direction="left"
+        />
+
+        {/* Bande Programmes */}
+        <CategoryMarquee 
+          title="Nos Programmes" 
+          items={PROGRAM_ITEMS} 
+          speed="slow" 
+          direction="right" 
+          className="bg-muted/30"
+        />
+
+        {/* Bande Témoignages (MISE EN AVANT) */}
+        <div className="py-8 bg-primary/5 border-y border-primary/10">
+          <CategoryMarquee 
+            title="Témoignages Impactants" 
+            items={TESTIMONY_ITEMS} 
+            speed="slow" 
+            direction="left" 
+            highlight={true} 
+          />
+        </div>
+
+        {/* Bande Projets */}
+        <CategoryMarquee 
+          title="Projets & Missions" 
+          items={PROJECT_ITEMS} 
+          speed="fast" 
+          direction="right" 
+        />
+
+         {/* Bande Partenaires */}
+         <CategoryMarquee 
+          title="Nos Partenaires" 
+          items={PARTNER_ITEMS} 
+          speed="normal" 
+          direction="left" 
+          className="opacity-80 grayscale hover:grayscale-0 transition-all duration-500"
+        />
+      </section>
+
       {/* Section Statistiques */}
       <section className="px-6 max-w-7xl mx-auto w-full">
         <div className="bg-white rounded-[2rem] p-10 shadow-blue-100 border border-border grid grid-cols-1 md:grid-cols-3 gap-10">
@@ -78,22 +169,6 @@ export default function Home() {
       {/* Section Ouvrages (Carrousel) */}
       <section className="bg-muted/30 w-full">
          <BooksCarousel />
-      </section>
-
-      {/* Section Partenaires */}
-      <section className="bg-muted py-12 px-6">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="text-center md:text-left">
-            <h3 className="text-2xl font-bold text-text-deep mb-2">Nos Partenaires</h3>
-            <p className="text-text-deep/60">Ils soutiennent la mission Jetemoigne-TV.</p>
-          </div>
-          <div className="flex flex-wrap justify-center gap-8 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
-             {/* Placeholders logos */}
-             <div className="w-32 h-12 bg-text-deep/20 rounded-lg"></div>
-             <div className="w-32 h-12 bg-text-deep/20 rounded-lg"></div>
-             <div className="w-32 h-12 bg-text-deep/20 rounded-lg"></div>
-          </div>
-        </div>
       </section>
     </div>
   );

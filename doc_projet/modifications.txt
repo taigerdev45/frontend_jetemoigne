@@ -29,3 +29,20 @@
 ## 10. Correctifs & Optimisations (Linter)
 - **AdsBanner.tsx :** Correction des caractères non échappés (`'`) pour la compatibilité JSX.
 - **BooksCarousel.tsx :** Optimisation de la classe Tailwind `aspect-[2/3]` vers la syntaxe standard `aspect-2/3`.
+
+## 11. Système de Bandes Défilantes (Infinite Marquee)
+- **Concept :** Création d'un système de bandes défilantes (Marquees) pour chaque grande interface de la plateforme, offrant un aperçu dynamique du contenu sans surcharger l'utilisateur.
+- **Composant `CategoryMarquee` :**
+    - Développement d'un composant générique et configurable (`direction`, `speed`, `highlight`).
+    - **Ergonomie :**
+        - Défilement automatique fluide (CSS Keyframes).
+        - Pause au survol pour permettre la lecture/interaction.
+        - Design responsive : Cartes adaptatives (taille, contenu).
+        - Masques dégradés latéraux pour une intégration douce.
+- **Mise en avant "Témoignages" :**
+    - Implémentation d'un mode `highlight` spécifique pour les témoignages.
+    - Cartes plus grandes, ombres portées accentuées, bouton "Lire la suite" interactif au survol.
+    - Positionnement central avec fond distinctif (`bg-primary/5`).
+- **Intégration Page d'Accueil :**
+    - Remplacement de la section statique "Partenaires" par des bandes dynamiques dédiées : Direct, Programmes, Témoignages, Projets, Partenaires.
+    - Alternance des directions (Gauche/Droite) et des vitesses pour un rythme visuel engageant.
