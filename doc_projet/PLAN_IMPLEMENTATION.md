@@ -41,8 +41,8 @@ Ce document détaille chaque étape technique pour la réalisation de la platefo
 - [x] Carrousel Ouvrages : Utilisation d'Embla Carousel / Shadcn Carousel.
 
 ### 2.3 Direct & Programmes
-- [ ] Lecteur Vidéo : Intégration de Video.js ou ReactPlayer pour HLS.
-- [ ] Filtres Pills : Composant ToggleGroup pour les catégories.
+- [x] Lecteur Vidéo : Intégration de Video.js ou ReactPlayer pour HLS.
+- [x] Filtres Pills : Composant ToggleGroup pour les catégories.
 - [ ] Grille de Programmes : Cartes avec effet hover bleu doux.
 - [ ] Modale Pop-up : Fenêtre contextuelle pour YouTube/TikTok (Glassmorphism).
 

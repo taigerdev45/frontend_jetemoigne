@@ -5,6 +5,8 @@ import { ProjectsTile } from "@/components/home/ProjectsTile";
 import { AdsBanner } from "@/components/home/AdsBanner";
 import { BooksCarousel } from "@/components/home/BooksCarousel";
 import { CategoryMarquee, MarqueeItem } from "@/components/home/CategoryMarquee";
+import { VideoPlayer } from "@/components/player/VideoPlayer";
+import { CategoryFilters } from "@/components/ui/CategoryFilters";
 
 // --- DONNÉES MOCKÉES ---
 const LIVE_ITEMS: MarqueeItem[] = [
@@ -45,6 +47,14 @@ const PARTNER_ITEMS: MarqueeItem[] = [
   { id: "pt3", title: "Mission Intérieure", subtitle: "Mission" },
   { id: "pt4", title: "TopChrétien", subtitle: "Web" },
   { id: "pt5", title: "Alliance Biblique Française", subtitle: "Institution" },
+];
+
+const PROGRAM_FILTERS = [
+  { value: "all", label: "Tous les Programmes" },
+  { value: "teaching", label: "Enseignements" },
+  { value: "documentary", label: "Documentaires" },
+  { value: "music", label: "Louange & Adoration" },
+  { value: "youth", label: "Jeunesse" },
 ];
 
 export default function Home() {
@@ -106,15 +116,27 @@ export default function Home() {
           mode="auto"
         />
 
-        {/* Bande Programmes (Scroll Manuel) */}
-        <CategoryMarquee 
-          title="Nos Programmes" 
-          items={PROGRAM_ITEMS} 
-          speed="slow" 
-          direction="right" 
-          className="bg-muted/30"
-          mode="manual"
-        />
+        {/* Section Programmes avec Filtres */}
+        <div className="flex flex-col gap-4">
+          <div className="px-6 flex items-center justify-between flex-wrap gap-4">
+             <h3 className="text-xl font-bold uppercase tracking-wider text-text-deep/40 hidden md:block">
+                Nos Programmes
+             </h3>
+             <CategoryFilters 
+                categories={PROGRAM_FILTERS} 
+                defaultValue="all" 
+                className="w-full md:w-auto"
+             />
+          </div>
+          <CategoryMarquee 
+            title="Nos Programmes" 
+            items={PROGRAM_ITEMS} 
+            speed="slow" 
+            direction="right" 
+            className="bg-muted/30"
+            mode="manual"
+          />
+        </div>
 
         {/* Bande Témoignages (Marquee Automatique - Highlight) */}
         <div className="py-8 bg-primary/5 border-y border-primary/10">
@@ -164,6 +186,29 @@ export default function Home() {
             <span className="text-text-deep/60 font-medium">Projets réalisés</span>
           </div>
         </div>
+      </section>
+
+      {/* Section Démo Vidéo (HLS Player) */}
+      <section className="px-6 max-w-5xl mx-auto w-full py-10">
+         <div className="flex flex-col gap-6">
+            <div className="flex items-center justify-between">
+               <h2 className="text-2xl font-bold text-text-deep">À la Une : Culte de Dimanche</h2>
+               <span className="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse">LIVE</span>
+            </div>
+            <VideoPlayer 
+               options={{
+                  autoplay: false,
+                  controls: true,
+                  responsive: true,
+                  fluid: true,
+                  sources: [{
+                     src: 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',
+                     type: 'application/x-mpegURL'
+                  }],
+                  poster: 'https://peach.blender.org/wp-content/uploads/title_anouncement.jpg' // Placeholder poster
+               }}
+            />
+         </div>
       </section>
 
       {/* Section Publicité (Bannière) */}

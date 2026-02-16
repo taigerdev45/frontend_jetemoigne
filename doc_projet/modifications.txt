@@ -67,3 +67,17 @@
     - **Logos :** Calibrés à `w-[240px] h-[120px]` pour une présence notable sans dominer.
 - **Structure de la Page d'Accueil :**
     - Réorganisation logique : Direct (Auto) -> Programmes (Manuel) -> Témoignages (Auto Highlight) -> Projets (Manuel) -> Partenaires (Auto Logos).
+
+## 14. Intégration Multimédia & Filtrage (Direct & Programmes)
+- **Lecteur Vidéo Avancé (Video.js) :**
+    - **Composant `VideoPlayer` :**
+        - Intégration de la librairie `video.js` pour un support robuste du streaming HLS (`.m3u8`), essentiel pour les directs et replays adaptatifs.
+        - **Architecture :** Wrapper React (`useRef`) assurant l'initialisation et le nettoyage correct de l'instance du lecteur pour éviter les fuites de mémoire (SPA).
+        - **Configuration :** Support des options natives (autoplay, controls, fluid, poster) et personnalisation CSS (`vjs-big-play-centered`) pour l'UX.
+        - **Intégration :** Déploiement d'un player de démonstration dans la section "À la Une" de la page d'accueil.
+- **Système de Filtrage (Shadcn UI) :**
+    - **Composant `CategoryFilters` :**
+        - Utilisation du composant `ToggleGroup` de Shadcn UI pour une ergonomie moderne type "Pills" (boutons arrondis).
+        - **Interactivité :** Gestion de l'état "sélectionné" (data-state=on) avec feedback visuel immédiat (changement de couleur primaire).
+        - **Responsive :** Flex wrap pour une adaptation parfaite sur mobile.
+        - **Usage :** Intégré en tête de la section "Programmes" pour permettre le tri rapide (Enseignements, Documentaires, Musique, etc.).
