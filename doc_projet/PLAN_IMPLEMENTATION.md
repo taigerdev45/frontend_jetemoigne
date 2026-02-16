@@ -30,15 +30,15 @@ Ce document détaille chaque étape technique pour la réalisation de la platefo
 ### 2.1 Layout & Navigation (Blue Clarity)
 - [x] Header : Effet `backdrop-blur`, navigation responsive, bouton CTA "Soutenir".
 - [x] Footer : Liens utiles, réseaux sociaux, logo secondaire.
-- [ ] Transitions : Intégration de Framer Motion pour les changements de pages.
+- [x] Transitions : Intégration de Framer Motion pour les changements de pages.
 
 ### 2.2 Page d'Accueil (Le Hub)
 - [x] Hero Section : Bento Grid dynamique (Tailwind Grid).
 - [x] Section Statistiques : Chiffres clés (Compteurs animés).
-- [ ] Tuile Direct : Composant Live avec badge pulsant (CSS Animation).
-- [ ] Tuile Projets : Barre de progression stylisée (Shadcn Progress).
-- [ ] Section Pub : Bannière avec dégradé bleu ciel.
-- [ ] Carrousel Ouvrages : Utilisation d'Embla Carousel / Shadcn Carousel.
+- [x] Tuile Direct : Composant Live avec badge pulsant (CSS Animation).
+- [x] Tuile Projets : Barre de progression stylisée (Shadcn Progress).
+- [x] Section Pub : Bannière avec dégradé bleu ciel.
+- [x] Carrousel Ouvrages : Utilisation d'Embla Carousel / Shadcn Carousel.
 
 ### 2.3 Direct & Programmes
 - [ ] Lecteur Vidéo : Intégration de Video.js ou ReactPlayer pour HLS.

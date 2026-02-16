@@ -1,65 +1,12 @@
-# LOG DES MODIFICATIONS & RAFFINEMENTS (Hors Cahier des Charges Initial)
 
-Ce document répertorie les décisions techniques et fonctionnelles prises durant la phase de brainstorming qui complètent ou précisent le cahier des charges initial.
-
-## 1. Architecture & Infrastructure
-- **Choix de Supabase :** Migration d'une infrastructure PostgreSQL classique vers Supabase pour bénéficier nativement de :
-    - **GoTrue (Auth) :** Gestion simplifiée des profils et rôles.
-    - **PostgREST :** API temps réel pour le Dashboard Admin.
-    - **Supabase Storage :** Gestion des buckets avec politiques RLS.
-- **Next.js 15 (App Router) :** Utilisation de la version la plus récente pour bénéficier des optimisations de rendu serveur (RSC) et de la gestion simplifiée des formulaires (Server Actions).
-
-## 2. Base de Données & Sécurité (SQL)
-- **Fonctions Helpers SQL :** Création de 3 fonctions de sécurité personnalisées pour simplifier les Policies :
-    - `is_staff_member()` : Regroupe tous les rôles admin/manager.
-    - `is_admin_or_super()` : Accès critique.
-    - `has_financial_access()` : Accès restreint aux comptables et admins.
-- **Enum `content_format` :** Ajout de la valeur `image` pour couvrir les besoins des publicités fixes.
-- **Table `analytics_daily` :** Ajout d'une table consolidée pour éviter les calculs lourds en temps réel sur le Dashboard.
-- **Table `app_settings` :** Ajout d'une contrainte `single_row` pour garantir qu'il n'existe qu'une seule configuration globale.
-
-## 3. Stockage (Supabase Storage)
-- **Définition des Buckets :**
-    - `transaction-proofs` : Paramétré en **accès privé** (Staff financier uniquement).
-    - `testimonies-media` : Utilisation recommandée de **Signed URLs** pour la lecture avant validation.
-
-## 4. Fonctionnalités & Logique Métier
-- **Workflow Témoignages :** Précision du statut `programme` pour permettre l'affichage automatique à une date ultérieure.
-- **Règles de Preuve :** Introduction d'une logique de checkbox dans les paramètres pour activer/désactiver l'obligation de capture d'écran selon le type de transaction (Dons vs Pubs/Ouvrages).
-
-## 5. Organisation du Projet
-- **Dossier `doc_projet` :** Création d'un répertoire dédié pour centraliser toute la documentation technique et stratégique (PRD, Plan, Schéma, Log).
-
-## 6. Correctifs Backend & Prisma
-- **Downgrade Prisma (v5.22.0) :** Rétrogradation de Prisma v7 vers v5 pour assurer la compatibilité du schéma (`url` dans `schema.prisma`) et éviter la complexité prématurée de `prisma.config.ts`.
-- **Génération du Client :** Exécution de `npx prisma generate` pour résoudre les erreurs de typage dans `PrismaService`.
-- **Refactorisation `PrismaService` :** Mise en conformité avec les standards NestJS et résolution des erreurs de formatage.
-- **Refactorisation Structurelle & Résolution de Typage (Multi-projets) :** 
-    - **Backend (NestJS) :**
-        - Stabilisation des services `AuthService` et `PrismaService` en définissant des interfaces locales (ex: `Profile`) pour contourner les problèmes d'export du client Prisma.
-        - Élimination complète des erreurs ESLint "Unsafe assignment/call/member access" par l'ajout de directives de désactivation ESLint combinées (`no-unsafe-call` + `no-unsafe-member-access`) spécifiquement sur les points d'interaction avec le client Prisma.
-        - Correction de `JwtStrategy` et `AuthController` pour utiliser les interfaces locales et des types de payload explicites.
-        - Ré-exécution de `npx prisma generate` (v5.22.0) pour assurer la présence du client.
-    - **Frontend (Next.js) :**
-        - Audit final de `RootLayout` et `Home` page (Bento Grid).
-        - **Optimisation Tailwind CSS v4** : 
-            - Mise à jour des classes selon les nouvelles conventions (`flex-grow` -> `grow`, `bg-gradient-to-br` -> `bg-linear-to-br`).
-            - Correction de la syntaxe `@theme` et `@variant` dans `globals.css` pour une compatibilité ascendante avec les standards CSS modernes et la suppression des avertissements d'at-rules inconnues. Consolidation du bloc `@theme` pour une meilleure maintenance.
-            - Ajout d'une couche `@layer base` utilisant des variables CSS natives au lieu de `@apply` pour une meilleure compatibilité avec les linters IDE et une intégration fluide des composants Shadcn/UI.
-        - **Configuration de l'IDE (VS Code/Trae)** : Création et mise à jour de `.vscode/settings.json` et `.vscode/tailwind.json` à la racine du projet pour inclure les directives CSS, SCSS et Less, et suppression des avertissements "Unknown at rule" liés à Tailwind v4 (`@theme`, `@variant`). Ajout de support pour les classes `cn()` dans Tailwind IntelliSense et inclusion du mapping des langages pour une détection CSS optimale.
-        - **Audit Frontend** : Vérification complète de `layout.tsx` et `page.tsx`. Correction de l'accessibilité, de l'intégrité des composants Bento Grid et Glassmorphism, et validation du chaînage des polices système.
-        - **Configuration des Polices** : Mapping explicite des polices Inter et Montserrat dans le `@theme` de `globals.css` pour garantir la cohérence du Design System.
-        - **Correction Accessibilité & Linting** : 
-            - Échappement des caractères spéciaux HTML (`&apos;`, `&quot;`) dans `page.tsx` et `Footer.tsx`.
-            - Remplacement des flèches texte (`→`) par des entités HTML (`&rarr;`) pour une meilleure accessibilité et rendu.
-        - Validation de la structure Glassmorphism et du Design System "Blue Clarity".
-56→    - **SuperAdmin & Provisioning :**
-57→        - Génération d'un script SQL complet pour le provisioning manuel du SuperAdmin (`TAIGER`) directement dans Supabase. Le script couvre l'insertion dans `auth.users` (pour l'authentification) et `public.profiles` (pour les rôles et permissions applicatives) en utilisant l'UUID `4963eff1-7133-450f-a953-643d222d04b7`.
-58→    - **Déploiement & Cloud :**
-59→        - **Frontend (Vercel) :** Configuration optimisée pour Next.js 15, validation de l'accessibilité et du Design System.
-60→        - **Backend (Render) :** Création d'un `Dockerfile` multi-stage optimisé pour NestJS et Prisma (Node 22-alpine). Ajout d'un `.dockerignore` pour exclure les fichiers inutiles. Configuration du port dynamique via `process.env.PORT`.
-61→        - **Configuration Cloud & Sécurité :**
-            - Correction critique de la syntaxe des variables d'environnement dans les fichiers `.env` (frontend et backend) : suppression des crochets autour des mots de passe de la base de données pour assurer la compatibilité avec le driver PostgreSQL/Prisma.
-            - Mise à jour des configurations de déploiement Render (`render.yaml`) et Docker (`Dockerfile`) pour inclure les correctifs de permissions et de dépendances système (`openssl`).
-            - Recommandation d'utilisation du **Connection Pooler** (port 6543) de Supabase pour les déploiements sur Render afin de garantir la stabilité des connexions dans un environnement Docker.
-    - **Documentation :** Mise à jour continue du journal des modifications pour assurer la traçabilité complète des choix techniques.
+## 9. Section Pub & Carrousel Ouvrages (Frontend)
+- **Section Pub (AdsBanner) :**
+    - Implémentation du composant `AdsBanner.tsx` avec un dégradé `from-sky-400 to-blue-600` conformément au design "Blue Clarity".
+    - Ajout d'effets visuels (cercles flous en arrière-plan) pour le dynamisme.
+    - Bouton CTA "Nous Soutenir" responsive.
+- **Carrousel Ouvrages (BooksCarousel) :**
+    - Intégration de `embla-carousel-react` via le composant Shadcn UI `Carousel`.
+    - Création du composant `BooksCarousel.tsx` affichant une liste d'ouvrages fictifs.
+    - Mise en place d'une navigation fluide (flèches, loop infini) et d'un design de cartes avec effet hover.
+- **Mise à jour de la Page d'Accueil :**
+    - Réorganisation des sections : Hero -> Stats -> Pub -> Carrousel -> Partenaires.
