@@ -1,12 +1,10 @@
 
-## 9. Section Pub & Carrousel Ouvrages (Frontend)
-- **Section Pub (AdsBanner) :**
-    - Implémentation du composant `AdsBanner.tsx` avec un dégradé `from-sky-400 to-blue-600` conformément au design "Blue Clarity".
-    - Ajout d'effets visuels (cercles flous en arrière-plan) pour le dynamisme.
-    - Bouton CTA "Nous Soutenir" responsive.
-- **Carrousel Ouvrages (BooksCarousel) :**
-    - Intégration de `embla-carousel-react` via le composant Shadcn UI `Carousel`.
-    - Création du composant `BooksCarousel.tsx` affichant une liste d'ouvrages fictifs.
-    - Mise en place d'une navigation fluide (flèches, loop infini) et d'un design de cartes avec effet hover.
-- **Mise à jour de la Page d'Accueil :**
-    - Réorganisation des sections : Hero -> Stats -> Pub -> Carrousel -> Partenaires.
+## 8. Composants Hero & Bento Grid (Frontend)
+- **Tuile Direct (LiveTile) :**
+    - Extraction du code hardcodé de `page.tsx` vers un composant dédié `src/components/home/LiveTile.tsx`.
+    - **Animation :** Utilisation de `animate-ping` (Tailwind) pour l'indicateur "En Direct" (badge rouge pulsant), garantissant une alerte visuelle immédiate mais élégante.
+    - **Design :** Intégration du dégradé `bg-linear-to-br` et des ombres portées pour la profondeur.
+- **Tuile Projets (ProjectsTile) :**
+    - Création du composant `src/components/home/ProjectsTile.tsx`.
+    - **Intégration UI :** Remplacement de la barre de progression HTML native par le composant `Progress` de Shadcn UI (`@radix-ui/react-progress`).
+    - **Style :** Personnalisation de la barre avec `bg-secondary/20` (fond) et `bg-primary` (indicateur) pour respecter la charte "Blue Clarity".
