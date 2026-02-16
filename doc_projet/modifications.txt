@@ -46,3 +46,11 @@
 - **Intégration Page d'Accueil :**
     - Remplacement de la section statique "Partenaires" par des bandes dynamiques dédiées : Direct, Programmes, Témoignages, Projets, Partenaires.
     - Alternance des directions (Gauche/Droite) et des vitesses pour un rythme visuel engageant.
+
+## 12. Optimisation des Cartes Marquee (UX/UI)
+- **Agrandissement des Cartes :** Augmentation significative des dimensions pour améliorer la lisibilité et l'impact visuel.
+    - Standard : `w-[260px] h-[180px]` (Mobile) -> `w-[320px] h-[200px]` (Desktop).
+    - Highlight (Témoignages) : `w-[320px] h-[220px]` (Mobile) -> `w-[450px] h-[280px]` (Desktop).
+- **Réduction de l'Espacement :** Passage de `gap-4` à `gap-2` pour densifier l'information et occuper l'espace visuel de manière continue ("Bande").
+- **Appel à l'Action (CTA) :** Intégration d'un bouton d'action permanent ("Découvrir" ou "Lire le témoignage") dans chaque carte, améliorant le taux de clic potentiel.
+- **Support Vignettes :** Ajout de la logique de rendu pour les images de fond (placeholder `image` dans l'interface).
