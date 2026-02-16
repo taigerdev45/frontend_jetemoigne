@@ -97,24 +97,26 @@ export default function Home() {
       {/* Section Bandes Défilantes (Carrousels par Interface) */}
       <section className="flex flex-col gap-8 w-full border-t border-border/50 bg-muted/20 py-10">
         
-        {/* Bande Direct */}
+        {/* Bande Direct (Marquee Automatique) */}
         <CategoryMarquee 
           title="En Direct & Replay" 
           items={LIVE_ITEMS} 
           speed="normal" 
           direction="left"
+          mode="auto"
         />
 
-        {/* Bande Programmes */}
+        {/* Bande Programmes (Scroll Manuel) */}
         <CategoryMarquee 
           title="Nos Programmes" 
           items={PROGRAM_ITEMS} 
           speed="slow" 
           direction="right" 
           className="bg-muted/30"
+          mode="manual"
         />
 
-        {/* Bande Témoignages (MISE EN AVANT) */}
+        {/* Bande Témoignages (Marquee Automatique - Highlight) */}
         <div className="py-8 bg-primary/5 border-y border-primary/10">
           <CategoryMarquee 
             title="Témoignages Impactants" 
@@ -122,24 +124,27 @@ export default function Home() {
             speed="slow" 
             direction="left" 
             highlight={true} 
+            mode="auto"
           />
         </div>
 
-        {/* Bande Projets */}
+        {/* Bande Projets (Scroll Manuel) */}
         <CategoryMarquee 
           title="Projets & Missions" 
           items={PROJECT_ITEMS} 
           speed="fast" 
           direction="right" 
+          mode="manual"
         />
 
-         {/* Bande Partenaires */}
+         {/* Bande Partenaires (Marquee Logos Automatique) */}
          <CategoryMarquee 
           title="Nos Partenaires" 
           items={PARTNER_ITEMS} 
           speed="normal" 
           direction="left" 
-          className="opacity-80 grayscale hover:grayscale-0 transition-all duration-500"
+          mode="auto"
+          type="logo"
         />
       </section>
 

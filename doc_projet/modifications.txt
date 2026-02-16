@@ -54,3 +54,16 @@
 - **Réduction de l'Espacement :** Passage de `gap-4` à `gap-2` pour densifier l'information et occuper l'espace visuel de manière continue ("Bande").
 - **Appel à l'Action (CTA) :** Intégration d'un bouton d'action permanent ("Découvrir" ou "Lire le témoignage") dans chaque carte, améliorant le taux de clic potentiel.
 - **Support Vignettes :** Ajout de la logique de rendu pour les images de fond (placeholder `image` dans l'interface).
+
+## 13. Refonte des Bandes Défilantes (UX Avancée)
+- **Modes de Défilement Hybrides :**
+    - **Mode Automatique (Marquee) :** Réservé aux flux continus et prioritaires (Direct & Replay, Témoignages, Partenaires).
+    - **Mode Manuel (Carrousel Horizontal) :** Implémenté pour les contenus exploratoires (Programmes, Projets), permettant à l'utilisateur de naviguer à son rythme via un scroll horizontal natif (`overflow-x-auto`, `snap-x`).
+- **Affichage Spécifique "Partenaires" :**
+    - Création d'un rendu `type="logo"` optimisé pour les marques (format rectangulaire, grayscale par défaut, hover couleur), sans bouton ni texte superflu.
+- **Agrandissement & Ergonomie (V2) :**
+    - **Standard (Programmes/Projets/Direct) :** Augmentation à `w-[360px] h-[240px]` (Desktop) pour un impact visuel maximal et une meilleure lisibilité des vignettes.
+    - **Highlight (Témoignages) :** Passage à `w-[500px] h-[320px]` (Desktop), créant une véritable section "Hero" au sein du flux.
+    - **Logos :** Calibrés à `w-[240px] h-[120px]` pour une présence notable sans dominer.
+- **Structure de la Page d'Accueil :**
+    - Réorganisation logique : Direct (Auto) -> Programmes (Manuel) -> Témoignages (Auto Highlight) -> Projets (Manuel) -> Partenaires (Auto Logos).
