@@ -108,7 +108,7 @@ const MarqueeCard = ({ item, highlight }: { item: MarqueeItem; highlight: boolea
       )}
     >
       {/* Background Image Placeholder or Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/50 to-transparent z-0" />
+      <div className="absolute inset-0 bg-linear-to-br from-white/50 to-transparent z-0" />
       
       {item.image && (
         <div className="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity z-0 bg-cover bg-center" style={{ backgroundImage: `url(${item.image})` }} />

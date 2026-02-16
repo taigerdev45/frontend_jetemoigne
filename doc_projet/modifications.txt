@@ -81,3 +81,14 @@
         - **Interactivité :** Gestion de l'état "sélectionné" (data-state=on) avec feedback visuel immédiat (changement de couleur primaire).
         - **Responsive :** Flex wrap pour une adaptation parfaite sur mobile.
         - **Usage :** Intégré en tête de la section "Programmes" pour permettre le tri rapide (Enseignements, Documentaires, Musique, etc.).
+
+## 15. Correctifs & Optimisations Techniques
+- **Barre de Navigation (Header) :**
+    - **Problème résolu :** Disparition de la barre de navigation due à des conflits de superposition (z-index) et de transparence.
+    - **Solution :** 
+        - Augmentation du `z-index` à `100` pour garantir la priorité d'affichage sur tous les autres éléments (notamment les bannières et lecteurs vidéo).
+        - Renforcement de la visibilité au scroll : remplacement de l'effet "glass" simple par un fond semi-opaque (`bg-white/90`) avec flou (`backdrop-blur-md`) et bordure subtile, assurant la lisibilité du menu quel que soit le contenu en arrière-plan.
+- **Conformité Tailwind CSS v4 :**
+    - **Mise à jour des dégradés :** Remplacement des classes dépréciées `bg-gradient-to-*` par la nouvelle syntaxe `bg-linear-to-*` dans `CategoryMarquee` et autres composants, éliminant les avertissements de compilation.
+- **Expérience Utilisateur (Marquee) :**
+    - **Pause au Survol :** Réintégration de la fonctionnalité de pause de l'animation (`animation-play-state: paused`) lors du survol de la souris sur les bandes défilantes, permettant à l'utilisateur de cliquer plus facilement sur une carte ou un partenaire.
