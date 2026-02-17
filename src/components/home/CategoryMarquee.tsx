@@ -49,13 +49,13 @@ export const CategoryMarquee = ({
       
       {mode === "auto" ? (
         /* --- MODE MARQUEE (INFINITE SCROLL) --- */
-        <div className="relative w-full flex overflow-hidden mask-gradient-sides">
+        <div className="relative w-full flex overflow-hidden mask-gradient-sides group">
           {/* Gradient Masks */}
-          <div className="absolute left-0 top-0 bottom-0 w-10 md:w-32 bg-gradient-to-r from-background to-transparent z-10" />
-          <div className="absolute right-0 top-0 bottom-0 w-10 md:w-32 bg-gradient-to-l from-background to-transparent z-10" />
+          <div className="absolute left-0 top-0 bottom-0 w-10 md:w-32 bg-linear-to-r from-background to-transparent z-10" />
+          <div className="absolute right-0 top-0 bottom-0 w-10 md:w-32 bg-linear-to-l from-background to-transparent z-10" />
 
           {/* Marquee Content */}
-          <div className={cn("flex min-w-full shrink-0 gap-4 items-center px-2", animationDirection, speedClass[speed])}>
+          <div className={cn("flex min-w-full shrink-0 gap-4 items-center px-2 group-hover:[animation-play-state:paused]", animationDirection, speedClass[speed])}>
             {items.map((item) => (
               type === "logo" 
                 ? <LogoCard key={item.id} item={item} />
@@ -63,7 +63,7 @@ export const CategoryMarquee = ({
             ))}
           </div>
           {/* Duplicate for infinite loop */}
-          <div className={cn("flex min-w-full shrink-0 gap-4 items-center px-2", animationDirection, speedClass[speed])} aria-hidden="true">
+          <div className={cn("flex min-w-full shrink-0 gap-4 items-center px-2 group-hover:[animation-play-state:paused]", animationDirection, speedClass[speed])} aria-hidden="true">
             {items.map((item) => (
               type === "logo"
                 ? <LogoCard key={`${item.id}-copy`} item={item} />
