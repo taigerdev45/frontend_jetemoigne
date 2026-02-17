@@ -1,0 +1,6 @@
+chore: Fix remaining linter warnings and optimize DonationForm
+
+- Replace `aspect-[2/3]` with `aspect-2/3` in BookCard.tsx
+- Replace `z-[1050]` with `z-1050` in modal.tsx
+- Optimize DonationForm.tsx with useWatch and remove unused register
+- Update modifications.txt and PLAN_IMPLEMENTATION.md

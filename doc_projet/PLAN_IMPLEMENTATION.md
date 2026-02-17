@@ -61,12 +61,17 @@ Ce document détaille chaque étape technique pour la réalisation de la platefo
 - [x] Formulaire de Don : Sélection de montant, upload de capture (Dropzone).
 - [x] Formulaires Engagement : Bénévolat et Partenariat avec validation Zod.
 
-### 2.6 Optimisations & Corrections (En cours)
+### 2.6 Optimisations & Corrections (Terminé)
 - [x] Migration Tailwind v4 (Gradients, Z-index).
 - [x] Optimisation Images (Next.js Image).
 - [x] Intégration Marquee Actualités.
 - [x] Fixes UI (Modal z-index, Video Player).
-- [x] Nettoyage Linter (React Compiler, Unused vars).
+- [x] Nettoyage Linter (React Compiler, Unused vars, Types).
+
+### 2.7 Interface "Autres" (Ouvrages & Pubs)
+- [x] Page Ouvrages : Layout avec onglets (Bibliothèque / Mur Publicitaire).
+- [x] Bibliothèque : Grille de livres avec badges (Gratuit/Prix) et bouton d'action.
+- [x] Mur Publicitaire : Grille multimédia pour les partenaires (Images/Vidéos).
 
 ---
 

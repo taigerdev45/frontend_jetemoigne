@@ -162,6 +162,26 @@
    - **`PartnershipForm.tsx`** : Formulaire pour les entreprises/├®glises (Type de partenariat).
    - **`DonationForm.tsx`** : Interface de don avec s├®lection de montant (boutons + libre), choix du moyen de paiement, et **Upload de Preuve** (Drag & Drop via `react-dropzone`).
 
+### [Date: 2026-02-17] - Ajout Interface "Autres" (Ouvrages & Pubs)
+
+### Nouvelles Fonctionnalités
+1. **Page "Ouvrages" (`src/app/ouvrages/page.tsx`)** :
+   - Création de l'interface unifiée regroupant la bibliothèque et le mur publicitaire.
+   - Système de navigation par onglets (State-based) pour basculer entre les vues "Bibliothèque" et "Mur Publicitaire".
+   - Barre de recherche intégrée pour filtrer les ouvrages par titre ou auteur.
+
+2. **Bibliothèque (`BookCard.tsx`)** :
+   - Composant carte pour afficher les livres avec couverture, titre, auteur et prix.
+   - Gestion des badges "Gratuit" (Vert) et "Prix" (Gris/Blanc).
+   - Boutons d'action contextuels : "Télécharger" (si gratuit) ou "Acheter" (si payant).
+   - Mock data intégré pour la démonstration.
+
+3. **Mur Publicitaire (`AdWall.tsx`)** :
+   - Grille masonry-style pour les partenaires (Images et Vidéos).
+   - Effets de survol élégants affichant le titre et le nom du partenaire.
+   - Support des liens externes vers les sites des partenaires.
+   - Mise en avant dynamique (taille variable) pour casser la monotonie de la grille.
+
 ### Stack Technique
 - **Formulaires** : `react-hook-form` + `zod` pour la validation robuste.
 - **Upload** : `react-dropzone` pour la gestion intuitive des fichiers.
@@ -228,3 +248,17 @@
 
 1. **Modal (`src/components/ui/modal.tsx`)** :
    - Correction des classes `z-index` : Remplacement de `z-1050` (invalide sans config) par la valeur arbitraire `z-[1050]` pour garantir l'affichage au-dessus des autres Ã©lÃ©ments.
+### [Date: 2026-02-17] - Optimisations & Correctifs Linter Finaux
+
+### Corrections Techniques
+1. **Performance & React Hook Form (`DonationForm.tsx`)** :
+   - Remplacement de `watch` par le hook `useWatch` pour éviter les re-rendus inutiles et résoudre l'avertissement de mémoïsation du React Compiler.
+   - Suppression des variables inutilisées (`register`) issues de la déstructuration de `useForm`.
+
+2. **Standardisation Tailwind (`modal.tsx`, `BookCard.tsx`)** :
+   - `modal.tsx` : Remplacement des classes arbitraires `z-[1050]` par les classes standard `z-1050` et `z-1051` (supportées par la configuration étendue).
+   - `BookCard.tsx` : Correction de la syntaxe `aspect-[2/3]` vers la classe standard `aspect-2/3` pour une meilleure compatibilité.
+
+3. **Validation** :
+   - Vérification de l'absence d'erreurs de linter bloquantes.
+   - Confirmation de la compilation réussie du frontend.

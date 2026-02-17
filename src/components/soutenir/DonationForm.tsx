@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Loader2, CreditCard, Upload, Check } from "lucide-react";
@@ -21,7 +21,7 @@ const PREDEFINED_AMOUNTS = [10, 20, 50, 100];
 
 export function DonationForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { register, handleSubmit, setValue, watch, formState: { errors }, reset } = useForm<FormData>({
+  const { control, handleSubmit, setValue, formState: { errors }, reset } = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       amount: 50,
@@ -29,8 +29,8 @@ export function DonationForm() {
     },
   });
 
-  const selectedAmount = watch("amount");
-  const selectedMethod = watch("method");
+  const selectedAmount = useWatch({ control, name: "amount" });
+  const selectedMethod = useWatch({ control, name: "method" });
 
   const onDrop = (acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
