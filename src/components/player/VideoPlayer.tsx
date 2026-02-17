@@ -32,8 +32,8 @@ export const VideoPlayer = ({ options, onReady, className }: VideoPlayerProps) =
     // Make sure Video.js player is only initialized once
     if (!playerRef.current) {
       // Create the video element dynamically to avoid React reconciliation issues
-      const videoElement = document.createElement("video-js");
-      videoElement.classList.add('vjs-big-play-centered');
+      const videoElement = document.createElement("video");
+      videoElement.classList.add('video-js', 'vjs-big-play-centered');
       
       // Append it to the container
       videoRef.current.appendChild(videoElement);
@@ -47,7 +47,9 @@ export const VideoPlayer = ({ options, onReady, className }: VideoPlayerProps) =
         responsive: true,
       }, () => {
         videojs.log('Player is ready');
-        onReady && onReady(player);
+        if (onReady) {
+          onReady(player);
+        }
       });
 
     } else {

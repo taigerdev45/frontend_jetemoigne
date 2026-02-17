@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import { CategoryFilters } from "@/components/ui/CategoryFilters";
 import { ProgramCard } from "@/components/programs/ProgramCard";
 import { Modal } from "@/components/ui/modal";
@@ -48,7 +49,7 @@ export default function ProgrammesPage() {
            <input 
              type="text" 
              placeholder="Rechercher..." 
-             className="w-full md:w-64 px-4 py-2 pl-10 rounded-full border border-slate-300 focus:outline-hidden focus:ring-2 focus:ring-blue-500 transition-all bg-slate-50"
+             className="w-full md:w-64 px-4 py-2 pl-10 rounded-full border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-slate-50"
            />
            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 absolute left-3 top-2.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -116,14 +117,20 @@ export default function ProgrammesPage() {
                  <div className="prose prose-blue max-w-none text-slate-600">
                     <p>
                        Découvrez cet enseignement puissant qui a transformé la vie de milliers de personnes. 
-                       Un message d'espoir et de foi pour votre quotidien.
+                       Un message d&apos;espoir et de foi pour votre quotidien.
                     </p>
                  </div>
                  
                  <div className="border-t border-slate-100 pt-4 mt-2">
                     <div className="flex items-center gap-4">
-                       <div className="w-12 h-12 rounded-full bg-slate-200 overflow-hidden">
-                          <img src="https://i.pravatar.cc/150?u=a042581f4e29026024d" alt="Speaker" />
+                       <div className="w-12 h-12 rounded-full bg-slate-200 overflow-hidden relative">
+                          <Image 
+                            src="https://i.pravatar.cc/150?u=a042581f4e29026024d" 
+                            alt="Speaker" 
+                            fill
+                            className="object-cover"
+                            unoptimized
+                          />
                        </div>
                        <div>
                           <p className="font-bold text-slate-900">Pasteur Jean Dupont</p>

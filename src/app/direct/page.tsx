@@ -1,51 +1,34 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { VideoPlayer } from "@/components/player/VideoPlayer";
 import { Button } from "@/components/ui/button";
-import { Clock, Share2, MessageCircle } from "lucide-react";
+import { Share2, MoreVertical } from "lucide-react";
+import { LiveStreamCard } from "@/components/direct/LiveStreamCard";
+import { MarqueeItem } from "@/components/home/CategoryMarquee";
 
-// Mock data for the schedule
-const LIVE_SCHEDULE = [
-  { id: "1", title: "Culte de Dimanche", time: "10:00 - 12:00", active: true, description: "Louange et adoration avec le groupe Espoir." },
-  { id: "2", title: "Intercession", time: "14:00 - 15:30", active: false, description: "Moment de prière pour les malades." },
-  { id: "3", title: "Étude Biblique", time: "18:00 - 19:30", active: false, description: "Livre de l'Apocalypse, chapitre 4." },
-  { id: "4", title: "Rediffusion : Talk Show", time: "21:00 - 22:00", active: false, description: "La foi au quotidien." },
+// Mock data for other live streams / recommendations
+const OTHER_LIVES: (MarqueeItem & { viewers?: number; time?: string })[] = [
+  { id: "l1", title: "Concert de Louange - Groupe Espoir", subtitle: "Louange", image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=2070&auto=format&fit=crop", viewers: 342 },
+  { id: "l2", title: "Intercession Matinale", subtitle: "Prière", image: "https://images.unsplash.com/photo-1438232992991-995b7058bbb3?q=80&w=2073&auto=format&fit=crop", viewers: 156 },
+  { id: "l3", title: "Talk Show : La Foi au Quotidien", subtitle: "Débat", image: "https://images.unsplash.com/photo-1544531586-fde5298cdd40?q=80&w=2070&auto=format&fit=crop", time: "14:00" },
+  { id: "l4", title: "Conférence : Guérison Divine", subtitle: "Enseignement", image: "https://images.unsplash.com/photo-1507692049790-de58293a4697?q=80&w=2070&auto=format&fit=crop", time: "16:00" },
+  { id: "l5", title: "Les Héros de la Foi : David", subtitle: "Documentaire", image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=2070&auto=format&fit=crop", time: "18:00" },
+  { id: "l6", title: "Chants de Victoire Vol. 2", subtitle: "Musique", image: "https://images.unsplash.com/photo-1459749411177-0473ef716175?q=80&w=2070&auto=format&fit=crop", time: "20:00" },
+  { id: "l7", title: "Étude Biblique Interactive", subtitle: "Étude", image: "https://images.unsplash.com/photo-1491841550275-ad7854e35ca6?q=80&w=1974&auto=format&fit=crop", time: "Demain" },
 ];
 
 export default function DirectPage() {
   return (
-    <div className="min-h-screen pt-24 pb-10 px-6 max-w-7xl mx-auto flex flex-col gap-10">
+    <div className="min-h-screen pt-20 pb-0 bg-white dark:bg-black">
       
-      {/* Header Section */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <div className="flex items-center gap-3 mb-2">
-             <span className="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse flex items-center gap-2">
-                <span className="w-2 h-2 bg-white rounded-full animate-ping" />
-                EN DIRECT
-             </span>
-             <span className="text-slate-500 text-sm font-medium flex items-center gap-1">
-                <Clock className="w-4 h-4" /> 10:42
-             </span>
-          </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">Culte de Dimanche</h1>
-          <p className="text-slate-600 dark:text-slate-400 mt-2">En direct depuis l'église principale de Paris.</p>
-        </div>
-        <div className="flex gap-3">
-           <Button variant="outline" className="gap-2 rounded-full">
-              <Share2 className="w-4 h-4" /> Partager
-           </Button>
-           <Button className="gap-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white">
-              <MessageCircle className="w-4 h-4" /> Chat
-           </Button>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main Player Column */}
-        <div className="lg:col-span-2 flex flex-col gap-6">
-           <div className="rounded-3xl overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 bg-black aspect-video relative group">
+      <div className="max-w-[1800px] mx-auto grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-6">
+        
+        {/* Main Player Column (2/3 width on large screens) */}
+        <div className="lg:col-span-2 xl:col-span-3 flex flex-col gap-4">
+           {/* Video Player Container */}
+           <div className="rounded-2xl overflow-hidden shadow-2xl bg-black aspect-video relative w-full">
              <VideoPlayer 
                 options={{
                   autoplay: true,
@@ -60,68 +43,127 @@ export default function DirectPage() {
                 }}
              />
            </div>
-           
-           {/* Description / Actions */}
-           <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
-              <h3 className="font-bold text-xl mb-4">À propos de ce programme</h3>
-              <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
-                Rejoignez-nous pour notre culte dominical spécial. Au programme : louange prophétique, témoignages poignants et un message puissant sur la foi inébranlable.
-                N'hésitez pas à partager vos sujets de prière dans le chat.
-              </p>
-              <div className="mt-6 flex flex-wrap gap-4">
-                 <div className="px-4 py-2 bg-blue-50 text-blue-700 rounded-lg text-sm font-semibold">Louange</div>
-                 <div className="px-4 py-2 bg-purple-50 text-purple-700 rounded-lg text-sm font-semibold">Enseignement</div>
-                 <div className="px-4 py-2 bg-green-50 text-green-700 rounded-lg text-sm font-semibold">Famille</div>
+
+           {/* Video Info Section */}
+           <div className="flex flex-col gap-4">
+              <h1 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white leading-tight">
+                 Culte de Dimanche : La Puissance de la Résurrection
+              </h1>
+              
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
+                 <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-full bg-slate-200 overflow-hidden relative">
+                       <Image 
+                         src="https://i.pravatar.cc/150?u=church" 
+                         alt="Channel Avatar" 
+                         fill
+                         className="object-cover"
+                         unoptimized
+                       />
+                    </div>
+                    <div>
+                       <h3 className="font-bold text-sm md:text-base text-slate-900 dark:text-white">Église Principale de Paris</h3>
+                       <p className="text-xs text-slate-500 dark:text-slate-400">12k abonnés</p>
+                    </div>
+                    <Button className="ml-4 rounded-full bg-slate-900 text-white hover:bg-slate-800 dark:bg-white dark:text-black font-semibold h-9 px-5">
+                       S&apos;abonner
+                    </Button>
+                 </div>
+
+                 <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
+                    <Button variant="secondary" className="rounded-full gap-2 h-9 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:text-white">
+                       <span className="font-bold">1.2k</span> J&apos;aime
+                    </Button>
+                    <Button variant="secondary" className="rounded-full gap-2 h-9 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:text-white">
+                       <Share2 className="w-4 h-4" /> Partager
+                    </Button>
+                    <Button variant="secondary" className="rounded-full h-9 w-9 p-0 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:text-white flex items-center justify-center">
+                       <MoreVertical className="w-4 h-4" />
+                    </Button>
+                 </div>
+              </div>
+
+              {/* Description Box */}
+              <div className="bg-slate-100 dark:bg-slate-900 rounded-xl p-4 text-sm text-slate-700 dark:text-slate-300">
+                 <div className="flex gap-2 font-bold mb-2">
+                    <span>24 oct. 2023</span>
+                    <span>•</span>
+                    <span className="text-red-600">EN DIRECT</span>
+                 </div>
+                 <p>
+                    Rejoignez-nous pour ce moment exceptionnel de louange et d&apos;adoration. 
+                    Le pasteur Jean Dupont nous partagera un message inspirant sur la foi.
+                    N&apos;oubliez pas de liker et partager !
+                 </p>
+                 <Button variant="link" className="p-0 h-auto text-slate-500 mt-2 font-semibold">Plus</Button>
+              </div>
+              
+              {/* Comments Section Placeholder */}
+              <div className="hidden md:block mt-4">
+                 <h3 className="font-bold text-lg mb-4">128 Commentaires</h3>
+                 <div className="flex gap-4">
+                    <div className="w-10 h-10 rounded-full bg-slate-200 shrink-0 overflow-hidden relative">
+                       <Image 
+                         src="https://i.pravatar.cc/150?u=user" 
+                         alt="User" 
+                         width={40} 
+                         height={40} 
+                         className="object-cover"
+                         unoptimized
+                       />
+                    </div>
+                    <input 
+                       type="text" 
+                       placeholder="Ajouter un commentaire..." 
+                       className="w-full border-b border-slate-200 dark:border-slate-800 bg-transparent py-2 focus:outline-hidden focus:border-blue-500 transition-colors"
+                    />
+                 </div>
               </div>
            </div>
         </div>
 
-        {/* Sidebar Schedule */}
-        <div className="flex flex-col gap-6">
-           <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm h-fit sticky top-24">
-             <h3 className="font-bold text-xl mb-6 flex items-center gap-2">
-                <Clock className="w-5 h-5 text-blue-600" />
-                Programme du Jour
-             </h3>
-             <div className="relative border-l-2 border-slate-100 dark:border-slate-800 ml-3 space-y-8 py-2">
-               {LIVE_SCHEDULE.map((item, index) => (
-                 <div key={item.id} className="relative pl-8 group">
-                   {/* Timeline Dot */}
-                   <span className={`absolute -left-[9px] top-1 w-4 h-4 rounded-full border-2 transition-all ${
-                     item.active 
-                       ? 'bg-red-500 border-red-200 shadow-[0_0_0_4px_rgba(239,68,68,0.2)]' 
-                       : 'bg-white border-slate-300 dark:bg-slate-800 dark:border-slate-600'
-                   }`} />
-                   
-                   <div className={`transition-all ${item.active ? 'opacity-100' : 'opacity-70 group-hover:opacity-100'}`}>
-                     <span className={`text-xs font-bold block mb-1 ${item.active ? 'text-red-500' : 'text-slate-400'}`}>
-                       {item.time}
-                     </span>
-                     <h4 className={`font-bold text-base mb-1 ${item.active ? 'text-slate-900 dark:text-white' : 'text-slate-700 dark:text-slate-300'}`}>
-                       {item.title}
-                     </h4>
-                     <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2">
-                       {item.description}
-                     </p>
-                   </div>
-                 </div>
-               ))}
-             </div>
-             
-             <Button variant="ghost" className="w-full mt-6 text-blue-600 hover:text-blue-700 hover:bg-blue-50">
-                Voir le programme complet &rarr;
-             </Button>
-           </div>
+        {/* Sidebar / Up Next Column (Scrollable) */}
+        <div className="lg:col-span-1 xl:col-span-1 flex flex-col gap-4 h-fit">
            
-           {/* Donation CTA */}
-           <div className="bg-linear-to-br from-blue-600 to-indigo-700 rounded-3xl p-6 text-white shadow-lg text-center">
-              <h3 className="font-bold text-lg mb-2">Soutenez notre mission</h3>
-              <p className="text-blue-100 text-sm mb-4">Votre générosité nous permet de continuer à diffuser l'évangile.</p>
-              <Button className="w-full bg-white text-blue-700 hover:bg-blue-50 font-bold rounded-xl shadow-none border-0">
+           {/* Donation CTA (Sticky on top of sidebar if needed, or just part of flow) */}
+           <div className="bg-linear-to-r from-blue-600 to-indigo-600 rounded-xl p-4 text-white shadow-md flex items-center justify-between gap-4">
+              <div>
+                 <h3 className="font-bold text-sm">Soutenez le live</h3>
+                 <p className="text-blue-100 text-xs">Votre don fait la différence.</p>
+              </div>
+              <Button size="sm" className="bg-white text-blue-700 hover:bg-blue-50 font-bold border-0 shadow-none whitespace-nowrap">
                  Faire un don
               </Button>
            </div>
+
+           {/* Filter Chips (Horizontal Scroll) */}
+           <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
+              <span className="px-3 py-1 bg-slate-900 text-white rounded-lg text-xs font-bold whitespace-nowrap cursor-pointer">Tout</span>
+              <span className="px-3 py-1 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-lg text-xs font-bold whitespace-nowrap cursor-pointer transition-colors">Pour vous</span>
+              <span className="px-3 py-1 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-lg text-xs font-bold whitespace-nowrap cursor-pointer transition-colors">En direct</span>
+              <span className="px-3 py-1 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-lg text-xs font-bold whitespace-nowrap cursor-pointer transition-colors">Récents</span>
+           </div>
+
+           {/* Video List */}
+           <div className="flex flex-col gap-2">
+              {OTHER_LIVES.map((item) => (
+                 <LiveStreamCard 
+                    key={item.id} 
+                    item={item} 
+                    isActive={item.viewers !== undefined}
+                 />
+              ))}
+              {/* Duplicate for demo scroll length */}
+               {OTHER_LIVES.map((item) => (
+                 <LiveStreamCard 
+                    key={`${item.id}-copy`} 
+                    item={item} 
+                    isActive={false}
+                 />
+              ))}
+           </div>
         </div>
+
       </div>
     </div>
   );

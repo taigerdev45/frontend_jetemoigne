@@ -5,6 +5,7 @@ import { ProjectsTile } from "@/components/home/ProjectsTile";
 import { AdsBanner } from "@/components/home/AdsBanner";
 import { BooksCarousel } from "@/components/home/BooksCarousel";
 import { CategoryMarquee, MarqueeItem } from "@/components/home/CategoryMarquee";
+import { LatestUpdatesMarquee } from "@/components/home/LatestUpdatesMarquee";
 import { VideoPlayer } from "@/components/player/VideoPlayer";
 import { CategoryFilters } from "@/components/ui/CategoryFilters";
 
@@ -60,8 +61,11 @@ const PROGRAM_FILTERS = [
 export default function Home() {
   return (
     <div className="flex flex-col gap-16 pb-0 overflow-x-hidden">
+      {/* Barre d'actualités */}
+      <LatestUpdatesMarquee />
+
       {/* Hero Section - Bento Grid */}
-      <section className="px-6 pt-10 max-w-7xl mx-auto w-full">
+      <section className="px-6 pt-0 max-w-7xl mx-auto w-full">
         <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-4 h-auto md:h-[600px]">
           {/* Tuile XL - Direct (Main) */}
           <div className="md:col-span-2 md:row-span-2">

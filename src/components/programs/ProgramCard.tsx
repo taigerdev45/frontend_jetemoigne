@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { MarqueeItem } from "@/components/home/CategoryMarquee";
 
@@ -20,7 +21,13 @@ export const ProgramCard = ({ item, onClick }: ProgramCardProps) => {
       {/* Background Image Placeholder */}
       <div className="absolute inset-0 bg-gray-100 group-hover:scale-105 transition-transform duration-700">
          {item.image ? (
-            <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+            <Image 
+              src={item.image} 
+              alt={item.title} 
+              fill
+              className="object-cover"
+              unoptimized
+            />
          ) : (
             <div className="w-full h-full bg-linear-to-br from-gray-100 to-gray-200" />
          )}

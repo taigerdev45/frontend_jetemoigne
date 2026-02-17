@@ -18,7 +18,11 @@ export const Modal = ({ isOpen, onClose, children, title, className }: ModalProp
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
+  }, []);
+
+  useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
     } else {
@@ -41,7 +45,7 @@ export const Modal = ({ isOpen, onClose, children, title, className }: ModalProp
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-1050 bg-black/60 backdrop-blur-sm"
           />
           
           {/* Modal Content */}
@@ -51,7 +55,7 @@ export const Modal = ({ isOpen, onClose, children, title, className }: ModalProp
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.2 }}
             className={cn(
-              "fixed left-[50%] top-[50%] z-[101] w-full max-w-lg translate-x-[-50%] translate-y-[-50%] p-6",
+              "fixed left-[50%] top-[50%] z-1051 w-full max-w-lg translate-x-[-50%] translate-y-[-50%] p-6",
               "bg-white/80 backdrop-blur-md border border-white/20 shadow-2xl rounded-3xl",
               "dark:bg-slate-900/80 dark:border-slate-800/50",
               className

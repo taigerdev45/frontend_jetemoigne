@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 export interface MarqueeItem {
@@ -55,7 +56,7 @@ export const CategoryMarquee = ({
           <div className="absolute right-0 top-0 bottom-0 w-10 md:w-32 bg-linear-to-l from-background to-transparent z-10" />
 
           {/* Marquee Content */}
-          <div className={cn("flex min-w-full shrink-0 gap-4 items-center px-2 group-hover:[animation-play-state:paused]", animationDirection, speedClass[speed])}>
+          <div className={cn("flex min-w-full shrink-0 gap-4 items-center px-2 group-hover:paused", animationDirection, speedClass[speed])}>
             {items.map((item) => (
               type === "logo" 
                 ? <LogoCard key={item.id} item={item} />
@@ -63,7 +64,7 @@ export const CategoryMarquee = ({
             ))}
           </div>
           {/* Duplicate for infinite loop */}
-          <div className={cn("flex min-w-full shrink-0 gap-4 items-center px-2 group-hover:[animation-play-state:paused]", animationDirection, speedClass[speed])} aria-hidden="true">
+          <div className={cn("flex min-w-full shrink-0 gap-4 items-center px-2 group-hover:paused", animationDirection, speedClass[speed])} aria-hidden="true">
             {items.map((item) => (
               type === "logo"
                 ? <LogoCard key={`${item.id}-copy`} item={item} />
@@ -89,7 +90,14 @@ const LogoCard = ({ item }: { item: MarqueeItem }) => {
   return (
     <div className="w-[200px] h-[100px] md:w-[240px] md:h-[120px] bg-white rounded-xl border border-border/50 shadow-sm flex items-center justify-center p-4 grayscale hover:grayscale-0 transition-all duration-500 opacity-70 hover:opacity-100">
       {item.image ? (
-        <img src={item.image} alt={item.title} className="max-w-full max-h-full object-contain" />
+        <Image 
+          src={item.image} 
+          alt={item.title} 
+          width={240} 
+          height={120} 
+          className="max-w-full max-h-full object-contain" 
+          unoptimized 
+        />
       ) : (
         <span className="text-lg font-bold text-text-deep/50 text-center leading-tight">{item.title}</span>
       )}
