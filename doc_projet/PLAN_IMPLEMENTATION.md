@@ -65,8 +65,8 @@ Ce document détaille chaque étape technique pour la réalisation de la platefo
 - [x] Migration Tailwind v4 (Gradients, Z-index).
 - [x] Optimisation Images (Next.js Image).
 - [x] Intégration Marquee Actualités.
-- [x] Fixes UI (Modal z-index, Video Player).
-- [x] Nettoyage Linter (React Compiler, Unused vars, Types).
+- [x] Fixes UI (Modal z-index, Video Player, Avatar, Tailwind Tokens).
+- [x] Nettoyage Linter (React Compiler, Unused vars, Types, date-fns).
 
 ### 2.7 Interface "Autres" (Ouvrages & Pubs)
 - [x] Page Ouvrages : Layout avec onglets (Bibliothèque / Mur Publicitaire).
@@ -88,14 +88,11 @@ Ce document détaille chaque étape technique pour la réalisation de la platefo
 - [x] Graphes principaux : Évolution des dons (AreaChart) et répartition des contenus (PieChart).
 
 ### 3.3 Gestion des Modules (CRUD)
-- [ ] Finance : Tableau des transactions avec filtrage avancé et visionneuse de preuves (Zoom image).
-- [ ] Contenu (Programmes) : Formulaire d'ajout complexe avec gestion des liens externes.
-- [ ] Témoignages (Workflow) :
-    - Interface de lecture média.
-    - Système de modération (Modifier/Rejeter/Valider).
-    - DatePicker pour la programmation.
-- [ ] Personnel : Gestion des rôles, annuaire Bénévoles/Partenaires.
-- [ ] Pubs & Ouvrages : Gestionnaire de fichiers PDF et campagnes publicitaires.
+- [x] Finance : Tableau des transactions avec filtrage et visualisation des preuves (Mock).
+- [x] Contenu (Programmes) : Liste des programmes avec statut (Publié, Brouillon).
+- [x] Témoignages (Workflow) : Tableau de modération avec filtres (En attente, Validé, Rejeté).
+- [ ] Personnel : Gestion des droits d'accès.
+- [ ] Pubs & Ouvrages : CRUD simple.
 
 ---
 

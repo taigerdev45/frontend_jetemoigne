@@ -1,0 +1,9 @@
+feat: Admin Interface - CRUD Modules (Testimonies, Programs, Finance)
+
+- Centralisation des types (`src/types/index.ts`) : `Testimony`, `Project`, `Program`.
+- Page Témoignages (`src/app/admin/temoignages/page.tsx`) : Tableau de modération avec filtres.
+- Page Programmes (`src/app/admin/programmes/page.tsx`) : Liste avec statuts (Publié/Brouillon).
+- Page Finance (`src/app/admin/finance/page.tsx`) : Suivi des dons et preuves.
+- UI : Ajout du composant `Table` (Shadcn UI).
+- Navigation : Mise à jour de la Sidebar Admin.
+- Documentation : Mise à jour de `PLAN_IMPLEMENTATION.md` et `modifications.txt`.

@@ -6,26 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Users, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
-
-export interface ProjectMilestone {
-  title: string;
-  date: string;
-  completed: boolean;
-}
-
-export interface Project {
-  id: string;
-  title: string;
-  description: string;
-  image: string;
-  category: string;
-  goal: number;
-  raised: number;
-  donorsCount: number;
-  endDate: string;
-  status: "active" | "completed" | "upcoming";
-  milestones?: ProjectMilestone[];
-}
+import { Project } from "@/types";
 
 interface ProjectCardProps {
   project: Project;

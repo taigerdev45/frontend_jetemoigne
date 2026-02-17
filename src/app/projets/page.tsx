@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Project, ProjectCard } from "@/components/projects/ProjectCard";
+import { ProjectCard } from "@/components/projects/ProjectCard";
+import { Project } from "@/types";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
 

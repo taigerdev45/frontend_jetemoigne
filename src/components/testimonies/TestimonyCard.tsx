@@ -4,24 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { Play, Mic, FileText, User } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-export type TestimonyType = "video" | "audio" | "text";
-
-export interface Testimony {
-  id: string;
-  type: TestimonyType;
-  author: {
-    name: string;
-    avatar?: string;
-    role?: string;
-  };
-  title: string;
-  content: string; // URL for video/audio, text content for text
-  thumbnail?: string; // For video
-  duration?: string; // For video/audio
-  date: string;
-  category: string;
-}
+import { Testimony } from "@/types";
 
 interface TestimonyCardProps {
   testimony: Testimony;

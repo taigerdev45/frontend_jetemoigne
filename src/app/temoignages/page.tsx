@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { Plus, Search } from "lucide-react";
-import { TestimonyCard, Testimony } from "@/components/testimonies/TestimonyCard";
+import { TestimonyCard } from "@/components/testimonies/TestimonyCard";
+import { Testimony } from "@/types";
 import { TestimonyForm } from "@/components/testimonies/TestimonyForm";
 import { CategoryFilters } from "@/components/ui/CategoryFilters";
 import { Modal } from "@/components/ui/modal";

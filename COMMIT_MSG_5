@@ -1,0 +1,8 @@
+feat: Interface Admin (Back-Office)
+
+- Layout Admin (`src/app/admin/layout.tsx`) : Structure avec Sidebar et Header.
+- Sidebar Admin (`src/components/admin/Sidebar.tsx`) : Navigation complète.
+- Dashboard Admin (`src/app/admin/page.tsx`) : KPIs et Graphiques (Recharts).
+- Composant `KPICard` : Carte de métriques réutilisable.
+- Documentation : Mise à jour de `PLAN_IMPLEMENTATION.md` et `modifications.txt`.
+- Nettoyage Linter : Correction des imports inutilisés.

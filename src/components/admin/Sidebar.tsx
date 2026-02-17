@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
   Film,
-  MessageSquare,
+  FileText,
   Target,
   CreditCard,
   Users,
@@ -18,7 +18,11 @@ import {
 const NAV_ITEMS = [
   { label: "Vue d'ensemble", href: "/admin", icon: LayoutDashboard },
   { label: "Programmes", href: "/admin/programmes", icon: Film },
-  { label: "Témoignages", href: "/admin/temoignages", icon: MessageSquare },
+  {
+    icon: FileText,
+    label: "Témoignages",
+    href: "/admin/temoignages",
+  },
   { label: "Projets", href: "/admin/projets", icon: Target },
   { label: "Finance & Dons", href: "/admin/finance", icon: CreditCard },
   { label: "Utilisateurs", href: "/admin/utilisateurs", icon: Users },
