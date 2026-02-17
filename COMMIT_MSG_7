@@ -1,9 +1,0 @@
-feat: Admin Interface CRUD & Fixes
-
-- Admin: Ajout des pages de gestion Finance, Programmes, Témoignages.
-- Admin: UI Tables et filtres pour les modules.
-- Fix: Installation de `date-fns` manquante.
-- Fix: Création du composant `Avatar` (shadcn/ui).
-- Refactor: Centralisation des types `Project` et `Testimony` dans `@/types`.
-- Style: Utilisation du token `text-text-deep` au lieu de `#1E3A8A`.
-- Docs: Mise à jour de `PLAN_IMPLEMENTATION.md` et `modifications.txt`.

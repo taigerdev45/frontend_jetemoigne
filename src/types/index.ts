@@ -15,7 +15,18 @@ export interface Testimony {
   duration?: string; // For video/audio
   date: string;
   category: string;
-  status?: "pending" | "approved" | "rejected"; // For admin
+  status?: "pending" | "approved" | "rejected" | "scheduled"; // For admin
+}
+
+export interface FinanceTransaction {
+  id: string;
+  date: string;
+  type: "financier" | "materiel";
+  category: "don" | "ouvrage" | "pub";
+  amount: number;
+  sender: string;
+  status: "verified" | "pending" | "rejected";
+  proofUrl?: string;
 }
 
 // Projects
@@ -49,5 +60,7 @@ export interface Program {
   category: string;
   date: string;
   duration?: string;
+  externalUrl?: string; // YouTube/FB/TikTok
+  format?: string;
   status: "published" | "draft" | "archived";
 }
