@@ -223,3 +223,8 @@
 
 4. **Documentation** :
    - Mise Ã  jour de `PLAN_IMPLEMENTATION.md` pour confirmer la finalisation du nettoyage linter.
+
+### [Date: 2026-02-17] - Correctif UI Modal
+
+1. **Modal (`src/components/ui/modal.tsx`)** :
+   - Correction des classes `z-index` : Remplacement de `z-1050` (invalide sans config) par la valeur arbitraire `z-[1050]` pour garantir l'affichage au-dessus des autres Ã©lÃ©ments.

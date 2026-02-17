@@ -1,0 +1,9 @@
+feat: Finalize Soutenir & Projets, Fix Modal z-index, Sync Backend
+
+- Added Projets page (src/app/projets/page.tsx) with milestones and progress bars
+- Finalized Soutenir interface (Transparency Dashboard, Action Center, Donation Form)
+- Fixed z-index issues in Modal component (z-[1050])
+- Synced backend with latest changes
+- Resolved linter errors (TestimonyForm, DonationForm) and optimized imports
+- Updated documentation (PLAN_IMPLEMENTATION.md, modifications.txt)
+- Verified Tailwind v4 compatibility (bg-linear syntax)
