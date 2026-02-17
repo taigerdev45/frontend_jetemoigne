@@ -19,7 +19,7 @@ export default function SoutenirPage() {
             Ensemble, Impactons des Vies
           </h1>
           <p className="text-xl text-blue-100 max-w-2xl mx-auto">
-            Votre soutien est le moteur de notre mission. Découvrez comment vous pouvez contribuer aujourd'hui.
+            Votre soutien est le moteur de notre mission. Découvrez comment vous pouvez contribuer aujourd&apos;hui.
           </p>
         </div>
       </section>

@@ -3,9 +3,8 @@
 import { useEffect, useState } from "react";
 import { Progress } from "@/components/ui/progress";
 import { Users, Handshake, TrendingUp } from "lucide-react";
-import { motion } from "framer-motion";
 
-const Counter = ({ end, label, icon: Icon, suffix = "" }: { end: number; label: string; icon: any; suffix?: string }) => {
+const Counter = ({ end, label, icon: Icon, suffix = "" }: { end: number; label: string; icon: React.ElementType; suffix?: string }) => {
   const [count, setCount] = useState(0);
 
   useEffect(() => {

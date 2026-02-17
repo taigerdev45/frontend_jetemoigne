@@ -41,7 +41,7 @@ export function PartnershipForm() {
       </h3>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="space-y-2">
-          <label className="text-sm font-medium">Nom de l'Organisation</label>
+          <label className="text-sm font-medium">Nom de l&apos;Organisation</label>
           <input {...register("organizationName")} className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Ma Société / Mon Église" />
           {errors.organizationName && <p className="text-red-500 text-xs">{errors.organizationName.message}</p>}
         </div>
@@ -60,7 +60,7 @@ export function PartnershipForm() {
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium">Type d'organisation</label>
+          <label className="text-sm font-medium">Type d&apos;organisation</label>
           <select {...register("type")} className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-blue-500 outline-none">
             <option value="entreprise">Entreprise</option>
             <option value="eglise">Église</option>

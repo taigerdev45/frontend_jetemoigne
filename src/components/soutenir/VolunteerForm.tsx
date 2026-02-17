@@ -35,7 +35,7 @@ export function VolunteerForm() {
   return (
     <div className="bg-white dark:bg-slate-900 p-8 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800">
       <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-        Rejoindre l'équipe Bénévoles
+        Rejoindre l&apos;équipe Bénévoles
       </h3>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

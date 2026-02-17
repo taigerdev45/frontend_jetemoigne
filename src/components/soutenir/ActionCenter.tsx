@@ -21,9 +21,9 @@ export function ActionCenter() {
     <section className="py-12 bg-white dark:bg-slate-950">
       <div className="container mx-auto px-4">
         <div className="text-center mb-10">
-          <h2 className="text-3xl font-bold mb-4">Centre d'Action</h2>
+          <h2 className="text-3xl font-bold mb-4">Centre d&apos;Action</h2>
           <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-            Choisissez comment vous souhaitez contribuer à l'œuvre. Chaque geste compte.
+            Choisissez comment vous souhaitez contribuer à l&apos;œuvre. Chaque geste compte.
           </p>
         </div>
 

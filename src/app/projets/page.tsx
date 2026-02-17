@@ -82,8 +82,8 @@ export default function ProjectsPage() {
               Nos Projets <span className="text-primary">Communautaires</span>
             </h1>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-10 leading-relaxed">
-              Découvrez les initiatives qui façonnent l'avenir de Jetemoigne-TV. 
-              Chaque don, chaque prière et chaque partage contribue à faire avancer l'œuvre.
+              Découvrez les initiatives qui façonnent l&apos;avenir de Jetemoigne-TV. 
+              Chaque don, chaque prière et chaque partage contribue à faire avancer l&apos;œuvre.
             </p>
           </motion.div>
         </div>
@@ -113,8 +113,8 @@ export default function ProjectsPage() {
               Vous avez un projet à cœur ?
             </h3>
             <p className="text-slate-600 mb-8 max-w-lg mx-auto">
-              Nous sommes toujours à l'écoute de nouvelles idées pour étendre notre impact. 
-              Rejoignez l'équipe de bénévoles pour proposer vos initiatives.
+              Nous sommes toujours à l&apos;écoute de nouvelles idées pour étendre notre impact. 
+              Rejoignez l&apos;équipe de bénévoles pour proposer vos initiatives.
             </p>
             <Button size="lg" className="rounded-full px-8 gap-2">
               Devenir Bénévole

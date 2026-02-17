@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Users, Target, ArrowRight } from "lucide-react";
+import { Calendar, Users, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 
 export interface ProjectMilestone {

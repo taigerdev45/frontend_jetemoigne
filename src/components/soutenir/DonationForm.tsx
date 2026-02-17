@@ -108,7 +108,7 @@ export function DonationForm() {
                <button
                  key={m.id}
                  type="button"
-                 onClick={() => setValue("method", m.id as any)}
+                 onClick={() => setValue("method", m.id as "card" | "paypal" | "transfer")}
                  className={cn(
                     "py-3 px-2 rounded-xl border text-sm font-medium transition-all flex flex-col items-center justify-center gap-1",
                     selectedMethod === m.id
@@ -125,7 +125,7 @@ export function DonationForm() {
         {/* Proof Upload */}
         <div className="space-y-3">
             <label className="text-sm font-medium flex items-center justify-between">
-                <span>Preuve de transaction (Capture d'écran)</span>
+                <span>Preuve de transaction (Capture d&apos;écran)</span>
                 <span className="text-xs text-slate-500 font-normal">Optionnel</span>
             </label>
             <div
