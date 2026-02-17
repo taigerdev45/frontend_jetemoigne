@@ -23,3 +23,27 @@
 - **Formulaires** : `react-hook-form` + `zod` pour la validation robuste.
 - **Upload** : `react-dropzone` pour la gestion intuitive des fichiers.
 - **UI** : `Tailwind CSS v4`, `Lucide React` (icônes), `Framer Motion` (animations).
+
+### [Date: 2026-02-17] - Ajout Page Projets
+1. **Page "Nos Projets" (`src/app/projets/page.tsx`)** :
+   - Création d'une grille de projets dynamique avec cartes interactives.
+   - Intégration de données mockées (`PROJECTS`) avec milestones et progression financière.
+
+2. **Composant Carte Projet (`ProjectCard.tsx`)** :
+   - Visualisation de l'avancement avec `Progress`.
+   - Badges de statut (En cours, Terminé) avec dégradés Tailwind v4 (`bg-linear-to-r`).
+   - Animation au survol et transition fluide.
+
+### [Date: 2026-02-17] - Finalisation Frontend & Sync Backend
+1. **Synchronisation Backend (`backend_jetemoigne`)** :
+   - Fusion des changements distants (git merge) pour assurer la compatibilité avec le frontend.
+   - Validation de l'état du dépôt.
+
+2. **Validation Complète Interfaces** :
+   - Validation de l'interface "Soutenir" (Dashboard, Action Center, Formulaires).
+   - Validation de l'interface "Témoignages" (Galerie, Formulaire Multi-step).
+   - Vérification des composants `LiveStreamCard` et autres pour la conformité Tailwind v4.
+
+3. **Nettoyage Technique** :
+   - Suppression des anciennes classes `bg-gradient-*` au profit de `bg-linear-*`.
+   - Standardisation des balises `Next/Image` pour l'optimisation des performances.

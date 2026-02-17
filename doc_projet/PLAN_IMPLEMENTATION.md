@@ -55,7 +55,7 @@ Ce document détaille chaque étape technique pour la réalisation de la platefo
     - [x] Step 3 : Éditeur riche (TipTap ou Quill) pour le texte.
 
 ### 2.5 Soutien & Projets
-- [ ] Page Projets : Liste détaillée avec milestones.
+- [x] Page Projets : Liste détaillée avec milestones.
 - [x] Dashboard Transparence : Compteurs animés (Framer Motion `animateNumber`) et Jauge financière.
 - [x] Centre d'Action (Soutenir) : 3 onglets (Bénévolat, Partenariat, Don).
 - [x] Formulaire de Don : Sélection de montant, upload de capture (Dropzone).
