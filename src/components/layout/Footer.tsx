@@ -49,8 +49,11 @@ const Footer = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto border-t border-white/10 mt-10 pt-6 text-center text-xs text-white/40">
-        © {new Date().getFullYear()} Jetemoigne-TV. Tous droits réservés. Inspiré par la Foi.
+      <div className="max-w-7xl mx-auto border-t border-white/10 mt-10 pt-6 flex flex-col md:flex-row justify-between items-center text-xs text-white/40">
+        <span>© {new Date().getFullYear()} Jetemoigne-TV. Tous droits réservés. Inspiré par la Foi.</span>
+        <div className="flex gap-4 mt-4 md:mt-0">
+            <Link href="/admin" className="hover:text-white transition-colors">Espace Administration</Link>
+        </div>
       </div>
     </footer>
   );
