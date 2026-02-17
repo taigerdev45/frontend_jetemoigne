@@ -91,8 +91,9 @@ Ce document détaille chaque étape technique pour la réalisation de la platefo
 - [x] Finance : Tableau des transactions avec filtrage et visualisation des preuves (Mock).
 - [x] Contenu (Programmes) : Liste des programmes avec statut (Publié, Brouillon).
 - [x] Témoignages (Workflow) : Tableau de modération avec filtres (En attente, Validé, Rejeté).
-- [ ] Personnel : Gestion des droits d'accès.
-- [ ] Pubs & Ouvrages : CRUD simple.
+- [x] Projets : Création, Assignation équipe, Suivi Milestones & Budget.
+- [x] Personnel (RH) : Gestion Utilisateurs, Bénévoles (Compétences), Partenaires (Activité/Pays).
+- [x] Pubs & Ouvrages : Campagnes publicitaires et Bibliothèque numérique (PDF/Prix).
 
 ---
 

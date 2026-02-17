@@ -1,25 +1,30 @@
 ﻿
-17. Validation des Interfaces Admin (Dons & Contenu)
-----------------------------------------------------
+18. Implémentation des Modules Admin (Projets, RH, Pubs)
+--------------------------------------------------------
 Date: 2026-02-17
-Description: Vérification complète et validation des interfaces Admin par rapport aux spécifications détaillées du cahier des charges.
+Description: Création des interfaces d'administration restantes pour la gestion des projets, du personnel et des ressources (pubs/ouvrages).
 
-Détails de la validation :
-1. Interface "Dons et Finances" (/admin/finance) :
-   - Tableau historique implémenté avec les colonnes requises (Date, Type, Montant, Émetteur, Statut).
-   - Filtres par catégorie (Ouvrage, Pub, Don) fonctionnels.
-   - Colonne "Preuve" avec lien vers la capture d'écran intégrée.
+Détails des ajouts :
+1. Interface "Projets" (/admin/projets) :
+   - Liste des projets avec barre de progression et statut.
+   - Formulaire complet de création/édition :
+     - Infos générales, Budget, Objectifs (liste dynamique).
+     - Assignation d'équipe (Sélection de membres).
+     - Gestion des étapes (Milestones) avec dates et état (Completed/Pending).
 
-2. Interface "Gestion du Contenu" (/admin/contenu) :
-   - Architecture en 2 onglets (Programmes / Témoignages) respectée.
-   - Onglet Programmes :
-     - Formulaire d'ajout complet (Titre, Catégorie, Format).
-     - Génération automatique de l'embed pour les liens externes (YouTube).
-     - Liste de gestion (CRUD) en place.
-   - Onglet Témoignages :
-     - Workflow de modération en 3 étapes implémenté (Visionnage -> Décision -> Programmation).
-     - Actions "Modifier", "Rejeter", "Valider" opérationnelles.
-     - Modale de traitement conforme.
+2. Interface "Personnel (RH)" (/admin/personnel) :
+   - Système d'onglets pour gérer 3 types de profils :
+     - Utilisateurs (Staff) : Filtrage par Rôle (Super Admin, Comptable, etc.).
+     - Bénévoles : Filtrage par Compétence.
+     - Partenaires : Filtrage par Domaine et Pays.
 
-État : CONFORME
-Prochaine étape suggérée : Intégration Backend (NestJS) ou Authentification Admin.
+3. Interface "Pubs & Ouvrages" (/admin/pubs-ouvrages) :
+   - Onglet Publicités : Gestion des campagnes (Date début/fin, Type Média, Stats de clics).
+   - Onglet Ouvrages : Gestion des livres (PDF, Prix, Couverture).
+
+4. Mises à jour techniques :
+   - Extension des types TypeScript (Project, User, Volunteer, Partner, Advertisement, Book).
+   - Mise à jour de la Sidebar Admin avec les nouveaux liens et icônes appropriées.
+
+État : TERMINÉ (Frontend Mocké)
+Prochaine étape : Backend Integration & Auth.

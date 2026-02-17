@@ -19,8 +19,8 @@ const NAV_ITEMS = [
   { label: "Gestion du Contenu", href: "/admin/contenu", icon: Film },
   { label: "Projets", href: "/admin/projets", icon: Target },
   { label: "Finance & Dons", href: "/admin/finance", icon: CreditCard },
-  { label: "Utilisateurs", href: "/admin/utilisateurs", icon: Users },
-  { label: "Ouvrages & Pubs", href: "/admin/ouvrages", icon: BookOpen },
+  { label: "Personnel (RH)", href: "/admin/personnel", icon: Users },
+  { label: "Pub & Ouvrage", href: "/admin/pubs-ouvrages", icon: BookOpen },
   { label: "Paramètres", href: "/admin/settings", icon: Settings },
 ];
 

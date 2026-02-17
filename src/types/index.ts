@@ -36,6 +36,13 @@ export interface ProjectMilestone {
   completed: boolean;
 }
 
+export interface ProjectTeamMember {
+  userId: string;
+  role: string;
+  name: string;
+  avatar?: string;
+}
+
 export interface Project {
   id: string;
   title: string;
@@ -48,6 +55,69 @@ export interface Project {
   endDate: string;
   status: "active" | "completed" | "upcoming";
   milestones?: ProjectMilestone[];
+  objectives?: string[];
+  team?: ProjectTeamMember[];
+  budget?: number;
+}
+
+// Personnel & Users
+export type UserRole = "Super Admin" | "Admin" | "Gestionnaire" | "Comptable" | "Observateur";
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  avatar?: string;
+  status: "active" | "inactive";
+  lastLogin?: string;
+}
+
+export interface Volunteer {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  skills: string[]; // Domaine de compétence
+  status: "active" | "pending";
+  dateJoined: string;
+}
+
+export interface Partner {
+  id: string;
+  name: string;
+  activityDomain: string;
+  country: string;
+  contactEmail: string;
+  website?: string;
+  logo?: string;
+  status: "active" | "pending";
+}
+
+// Ads & Books
+export interface Advertisement {
+  id: string;
+  title: string;
+  type: "video" | "image";
+  mediaUrl: string;
+  redirectUrl: string;
+  startDate: string;
+  endDate: string;
+  status: "active" | "scheduled" | "ended";
+  views?: number;
+  clicks?: number;
+}
+
+export interface Book {
+  id: string;
+  title: string;
+  author: string;
+  price: number; // 0 for free
+  coverUrl: string;
+  pdfUrl: string;
+  description?: string;
+  publishedDate: string;
+  status: "published" | "draft";
 }
 
 // Programs (Placeholder)
