@@ -20,7 +20,6 @@ import {
   DialogFooter, 
   DialogHeader, 
   DialogTitle, 
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { 
   Select, 
@@ -38,12 +37,15 @@ import {
   Edit, 
   Trash2, 
   Target, 
-  Users, 
-  CheckCircle2, 
-  Circle,
-  Calendar as CalendarIcon
+  Users,
+  CalendarIcon,
+  CheckCircle2,
+  Circle
 } from "lucide-react";
 import { Project, ProjectMilestone, ProjectTeamMember } from "@/types";
+
+// Helper for ID generation
+const generateId = () => Math.random().toString(36).substr(2, 9);
 
 // Mock Users for Team Selection
 const MOCK_USERS = [
@@ -165,7 +167,7 @@ export default function ProjectsPage() {
     if (!currentProject.title || !currentProject.goal) return;
 
     const projectToSave: Project = {
-      id: currentProject.id || Math.random().toString(36).substr(2, 9),
+      id: currentProject.id || generateId(),
       title: currentProject.title!,
       description: currentProject.description || "",
       image: currentProject.image || "/placeholder.jpg",
@@ -250,7 +252,7 @@ export default function ProjectsPage() {
                 <TableCell>
                   <div className="flex -space-x-2 overflow-hidden">
                     {project.team?.map((member, i) => (
-                      <div key={i} className="inline-block h-8 w-8 rounded-full ring-2 ring-white bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-800" title={member.name}>
+                      <div key={i} className="h-8 w-8 rounded-full ring-2 ring-white bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-800" title={member.name}>
                         {member.name.charAt(0)}
                       </div>
                     ))}
@@ -292,7 +294,7 @@ export default function ProjectsPage() {
         <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{currentProject.id ? "Modifier le Projet" : "Créer un Projet"}</DialogTitle>
-            <DialogDescription>Définissez les objectifs, le budget et l'équipe.</DialogDescription>
+            <DialogDescription>Définissez les objectifs, le budget et l&apos;équipe.</DialogDescription>
           </DialogHeader>
           
           <div className="grid gap-6 py-4">

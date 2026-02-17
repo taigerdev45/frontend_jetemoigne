@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { 
   Select, 
   SelectContent, 
@@ -25,8 +24,8 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import { User, Volunteer, Partner, UserRole } from "@/types";
-import { Mail, Phone, MapPin, Briefcase, Shield, Filter } from "lucide-react";
+import { User, Volunteer, Partner } from "@/types";
+import { Mail, Phone, Filter, Shield, Briefcase, MapPin } from "lucide-react";
 
 // Mock Data
 const MOCK_USERS: User[] = [

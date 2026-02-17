@@ -94,6 +94,8 @@ Ce document détaille chaque étape technique pour la réalisation de la platefo
 - [x] Projets : Création, Assignation équipe, Suivi Milestones & Budget.
 - [x] Personnel (RH) : Gestion Utilisateurs, Bénévoles (Compétences), Partenaires (Activité/Pays).
 - [x] Pubs & Ouvrages : Campagnes publicitaires et Bibliothèque numérique (PDF/Prix).
+- [x] Configuration & Paramètres : Gestion générale et sécurité du site.
+- [x] Nettoyage & Optimisation : Correction des erreurs linter et imports inutilisés sur l'ensemble des modules Admin.
 
 ---
 

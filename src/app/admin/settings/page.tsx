@@ -33,7 +33,7 @@ export default function SettingsPage() {
                 <div className="flex items-center justify-between">
                     <div>
                         <div className="font-medium">Double Authentification (2FA)</div>
-                        <div className="text-sm text-slate-500">Sécuriser l'accès administrateur.</div>
+                        <div className="text-sm text-slate-500">Sécuriser l&apos;accès administrateur.</div>
                     </div>
                     <Button variant="outline">Configurer</Button>
                 </div>

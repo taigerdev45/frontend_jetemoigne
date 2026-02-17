@@ -36,8 +36,7 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
-import { Plus, Trash2, Edit, Upload, Eye, Link as LinkIcon, Book, Image as ImageIcon } from "lucide-react";
+import { Plus, Trash2, Upload, Eye, Image as ImageIcon, Book, LinkIcon, Edit } from "lucide-react";
 import { Advertisement, Book as BookType } from "@/types";
 
 // Mock Data
