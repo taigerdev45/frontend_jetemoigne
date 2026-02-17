@@ -1,143 +1,25 @@
-## 7. UX & Transitions (Frontend)
-- **Intégration Framer Motion :**
-    - Création d'un composant client réutilisable `PageTransition.tsx` encapsulant `motion.div`.
-    - Implémentation via `template.tsx` (App Router) pour garantir le déclenchement des animations à chaque changement de route sans recharger le layout principal (Header/Footer).
-    - **Animation choisie :** "Fade In Up" (Opacité 0->1, Translation Y 20px->0px) pour une entrée fluide et élégante, cohérente avec le design system "Blue Clarity".
+### [Date: 2026-02-17] - Ajout Interface Soutenir
 
-## 8. Composants Hero & Bento Grid (Frontend)
-- **Tuile Direct (LiveTile) :**
-    - Extraction du code hardcodé de `page.tsx` vers un composant dédié `src/components/home/LiveTile.tsx`.
-    - **Animation :** Utilisation de `animate-ping` (Tailwind) pour l'indicateur "En Direct" (badge rouge pulsant), garantissant une alerte visuelle immédiate mais élégante.
-    - **Design :** Intégration du dégradé `bg-linear-to-br` et des ombres portées pour la profondeur.
-- **Tuile Projets (ProjectsTile) :**
-    - Création du composant `src/components/home/ProjectsTile.tsx`.
-    - **Intégration UI :** Remplacement de la barre de progression HTML native par le composant `Progress` de Shadcn UI (`@radix-ui/react-progress`).
-    - **Style :** Personnalisation de la barre avec `bg-secondary/20` (fond) et `bg-primary` (indicateur) pour respecter la charte "Blue Clarity".
+### Nouvelles Fonctionnalités
+1. **Page "Nous Soutenir" (`src/app/soutenir/page.tsx`)** :
+   - Création de la page dédiée avec une section Hero immersive.
+   - Intégration du **Tableau de Bord de Transparence**.
+   - Intégration du **Centre d'Action** (Onglets).
 
-## 9. Section Pub & Carrousel Ouvrages (Frontend)
-- **Section Pub (AdsBanner) :**
-    - Implémentation du composant `AdsBanner.tsx` avec un dégradé `from-sky-400 to-blue-600` conformément au design "Blue Clarity".
-    - Ajout d'effets visuels (cercles flous en arrière-plan) pour le dynamisme.
-    - Bouton CTA "Nous Soutenir" responsive.
-- **Carrousel Ouvrages (BooksCarousel) :**
-    - Intégration de `embla-carousel-react` via le composant Shadcn UI `Carousel`.
-    - Création du composant `BooksCarousel.tsx` affichant une liste d'ouvrages fictifs.
-    - Mise en place d'une navigation fluide (flèches, loop infini) et d'un design de cartes avec effet hover.
-- **Mise à jour de la Page d'Accueil :**
-    - Réorganisation des sections : Hero -> Stats -> Pub -> Carrousel -> Partenaires.
+2. **Tableau de Bord Transparence (`TransparencyDashboard.tsx`)** :
+   - Compteurs animés pour les bénévoles et partenaires.
+   - Jauge de progression financière (Objectif vs Réalisé) utilisant `shadcn/ui Progress`.
 
-## 10. Correctifs & Optimisations (Linter)
-- **AdsBanner.tsx :** Correction des caractères non échappés (`'`) pour la compatibilité JSX.
-- **BooksCarousel.tsx :** Optimisation de la classe Tailwind `aspect-[2/3]` vers la syntaxe standard `aspect-2/3`.
+3. **Centre d'Action (`ActionCenter.tsx`)** :
+   - Système d'onglets personnalisé pour naviguer entre "Faire un Don", "Bénévolat" et "Partenariat".
+   - Transitions animées avec `Framer Motion` lors du changement d'onglet.
 
-## 11. Système de Bandes Défilantes (Infinite Marquee)
-- **Concept :** Création d'un système de bandes défilantes (Marquees) pour chaque grande interface de la plateforme, offrant un aperçu dynamique du contenu sans surcharger l'utilisateur.
-- **Composant `CategoryMarquee` :**
-    - Développement d'un composant générique et configurable (`direction`, `speed`, `highlight`).
-    - **Ergonomie :**
-        - Défilement automatique fluide (CSS Keyframes).
-        - Pause au survol pour permettre la lecture/interaction.
-        - Design responsive : Cartes adaptatives (taille, contenu).
-        - Masques dégradés latéraux pour une intégration douce.
-- **Mise en avant "Témoignages" :**
-    - Implémentation d'un mode `highlight` spécifique pour les témoignages.
-    - Cartes plus grandes, ombres portées accentuées, bouton "Lire la suite" interactif au survol.
-    - Positionnement central avec fond distinctif (`bg-primary/5`).
-- **Intégration Page d'Accueil :**
-    - Remplacement de la section statique "Partenaires" par des bandes dynamiques dédiées : Direct, Programmes, Témoignages, Projets, Partenaires.
-    - Alternance des directions (Gauche/Droite) et des vitesses pour un rythme visuel engageant.
+4. **Formulaires Spécifiques** :
+   - **`VolunteerForm.tsx`** : Formulaire complet pour les bénévoles (Compétences, Disponibilités).
+   - **`PartnershipForm.tsx`** : Formulaire pour les entreprises/églises (Type de partenariat).
+   - **`DonationForm.tsx`** : Interface de don avec sélection de montant (boutons + libre), choix du moyen de paiement, et **Upload de Preuve** (Drag & Drop via `react-dropzone`).
 
-## 12. Optimisation des Cartes Marquee (UX/UI)
-- **Agrandissement des Cartes :** Augmentation significative des dimensions pour améliorer la lisibilité et l'impact visuel.
-    - Standard : `w-[260px] h-[180px]` (Mobile) -> `w-[320px] h-[200px]` (Desktop).
-    - Highlight (Témoignages) : `w-[320px] h-[220px]` (Mobile) -> `w-[450px] h-[280px]` (Desktop).
-- **Réduction de l'Espacement :** Passage de `gap-4` à `gap-2` pour densifier l'information et occuper l'espace visuel de manière continue ("Bande").
-- **Appel à l'Action (CTA) :** Intégration d'un bouton d'action permanent ("Découvrir" ou "Lire le témoignage") dans chaque carte, améliorant le taux de clic potentiel.
-- **Support Vignettes :** Ajout de la logique de rendu pour les images de fond (placeholder `image` dans l'interface).
-
-## 13. Refonte des Bandes Défilantes (UX Avancée)
-- **Modes de Défilement Hybrides :**
-    - **Mode Automatique (Marquee) :** Réservé aux flux continus et prioritaires (Direct & Replay, Témoignages, Partenaires).
-    - **Mode Manuel (Carrousel Horizontal) :** Implémenté pour les contenus exploratoires (Programmes, Projets), permettant à l'utilisateur de naviguer à son rythme via un scroll horizontal natif (`overflow-x-auto`, `snap-x`).
-- **Affichage Spécifique "Partenaires" :**
-    - Création d'un rendu `type="logo"` optimisé pour les marques (format rectangulaire, grayscale par défaut, hover couleur), sans bouton ni texte superflu.
-- **Agrandissement & Ergonomie (V2) :**
-    - **Standard (Programmes/Projets/Direct) :** Augmentation à `w-[360px] h-[240px]` (Desktop) pour un impact visuel maximal et une meilleure lisibilité des vignettes.
-    - **Highlight (Témoignages) :** Passage à `w-[500px] h-[320px]` (Desktop), créant une véritable section "Hero" au sein du flux.
-    - **Logos :** Calibrés à `w-[240px] h-[120px]` pour une présence notable sans dominer.
-- **Structure de la Page d'Accueil :**
-    - Réorganisation logique : Direct (Auto) -> Programmes (Manuel) -> Témoignages (Auto Highlight) -> Projets (Manuel) -> Partenaires (Auto Logos).
-
-## 14. Intégration Multimédia & Filtrage (Direct & Programmes)
-- **Lecteur Vidéo Avancé (Video.js) :**
-    - **Composant `VideoPlayer` :**
-        - Intégration de la librairie `video.js` pour un support robuste du streaming HLS (`.m3u8`), essentiel pour les directs et replays adaptatifs.
-        - **Architecture :** Wrapper React (`useRef`) assurant l'initialisation et le nettoyage correct de l'instance du lecteur pour éviter les fuites de mémoire (SPA).
-        - **Configuration :** Support des options natives (autoplay, controls, fluid, poster) et personnalisation CSS (`vjs-big-play-centered`) pour l'UX.
-        - **Intégration :** Déploiement d'un player de démonstration dans la section "À la Une" de la page d'accueil.
-- **Système de Filtrage (Shadcn UI) :**
-    - **Composant `CategoryFilters` :**
-        - Utilisation du composant `ToggleGroup` de Shadcn UI pour une ergonomie moderne type "Pills" (boutons arrondis).
-        - **Interactivité :** Gestion de l'état "sélectionné" (data-state=on) avec feedback visuel immédiat (changement de couleur primaire).
-        - **Responsive :** Flex wrap pour une adaptation parfaite sur mobile.
-        - **Usage :** Intégré en tête de la section "Programmes" pour permettre le tri rapide (Enseignements, Documentaires, Musique, etc.).
-
-## 15. Correctifs & Optimisations Techniques
-- **Barre de Navigation (Header) :**
-    - **Problème résolu :** Disparition de la barre de navigation due à des conflits de superposition (z-index) et de transparence.
-    - **Solution :** 
-        - Augmentation du `z-index` à `100` pour garantir la priorité d'affichage sur tous les autres éléments (notamment les bannières et lecteurs vidéo).
-        - Renforcement de la visibilité au scroll : remplacement de l'effet "glass" simple par un fond semi-opaque (`bg-white/90`) avec flou (`backdrop-blur-md`) et bordure subtile, assurant la lisibilité du menu quel que soit le contenu en arrière-plan.
-- **Conformité Tailwind CSS v4 :**
-    - **Mise à jour des dégradés :** Remplacement des classes dépréciées `bg-gradient-to-*` par la nouvelle syntaxe `bg-linear-to-*` dans `CategoryMarquee` et autres composants, éliminant les avertissements de compilation.
-- **Expérience Utilisateur (Marquee) :**
-    - **Pause au Survol :** Réintégration de la fonctionnalité de pause de l'animation (`animation-play-state: paused`) lors du survol de la souris sur les bandes défilantes, permettant à l'utilisateur de cliquer plus facilement sur une carte ou un partenaire.
-- **Menu Mobile (Header) :**
-    - **Problème résolu :** Le bouton "Menu" (hamburger) était inactif et le menu ne s'ouvrait pas sur mobile.
-    - **Solution :**
-        - Implémentation d'un état local `isMobileMenuOpen` pour gérer l'ouverture/fermeture.
-        - Ajout d'une interface de menu déroulant responsive avec `AnimatePresence` (framer-motion) pour une transition fluide.
-        - Remplacement de l'icône SVG statique par les icônes dynamiques `Menu` et `X` de `lucide-react`.
-
-### [Date: 2026-02-17] - Optimisation UI & Migration Tailwind v4
-
-### Corrections et Améliorations Majeures
-1. **Migration Tailwind CSS v4** :
-   - Remplacement systématique des classes de dégradé obsolètes : `bg-gradient-to-*` → `bg-linear-to-*`.
-   - Mise à jour des classes d'arbitrary values : `z-[100]` → `z-100`, `flex-shrink-0` → `shrink-0`.
-   - Simplification des animations : `hover:[animation-play-state:paused]` pour les marquees.
-   - Fichiers impactés : `LiveStreamCard.tsx`, `AdsBanner.tsx`, `CategoryMarquee.tsx`, `LatestUpdatesMarquee.tsx`, `LiveTile.tsx`, `Header.tsx`, `ProgramCard.tsx`, `AudioPlayer.tsx`.
-
-2. **Optimisation des Images (Next.js Image)** :
-   - Remplacement des balises `<img>` et `<image>` par le composant `next/image`.
-   - Ajout de la propriété `unoptimized` pour les URLs externes (mock data) afin d'éviter les erreurs de build/runtime.
-   - Correction spécifique dans `TestimonyCard.tsx` (remplacement de la balise SVG `<image>` incorrecte par `<Image>`).
-   - Fichiers impactés : `TestimonyCard.tsx`, `LiveStreamCard.tsx`, `CategoryMarquee.tsx`, `ProgramCard.tsx`.
-
-3. **Création de Composants Manquants** :
-   - Création et intégration de `LatestUpdatesMarquee.tsx` (Barre d'actualités défilante) en haut de la page d'accueil.
-   - Intégration dans `app/page.tsx`.
-
-4. **Corrections Diverses** :
-   - `modal.tsx` : Correction du z-index (1050) pour s'assurer que la modale s'affiche au-dessus du Header (z-100).
-   - `AudioPlayer.tsx` : Vérification de l'intégration de Wavesurfer.js et correction des classes Tailwind.
-   - `TestimonyForm.tsx` : Correction des types TypeScript pour la validation Zod (cast `as any` temporaire pour compatibilité FormData).
-   - `VideoPlayer.tsx` : Remplacement de l'élément custom `video-js` par une balise `video` standard pour compatibilité React.
-
-### État Actuel
-- L'interface "Témoignages" est fonctionnelle avec support Vidéo/Audio/Texte.
-- La page d'accueil est complète avec tous les widgets (Direct, Projets, Programmes, Actualités).
-- Le système est prêt pour l'intégration backend (Phase 4).
-
-### [Date: 2026-02-17] - Corrections de Lint & Nettoyage Technique
-
-### Corrections Supplémentaires
-1. **Conformité Tailwind v4 (Suite)** :
-   - `app/direct/page.tsx` : Correction de `bg-gradient-to-r` vers `bg-linear-to-r`.
-   - `CategoryMarquee.tsx` : Correction de `bg-gradient-to-br` vers `bg-linear-to-br` et standardisation de `animation-play-state:paused` (suppression des crochets inutiles pour la classe arbitraire).
-2. **Standardisation UI** :
-   - `modal.tsx` : Remplacement des valeurs arbitraires `z-[1050]` par les classes standard `z-1050` (si configurées) ou simplification pour éviter les conflits de parsing.
-3. **Qualité du Code (TypeScript/React)** :
-   - `TestimonyForm.tsx` : 
-     - Export du schéma `formSchema` pour éliminer l'avertissement de variable inutilisée.
-     - Migration de `watch()` vers le hook `useWatch()` pour optimiser les performances et satisfaire le compilateur React (évite les rendus inutiles et les avertissements de mémoïsation).
+### Stack Technique
+- **Formulaires** : `react-hook-form` + `zod` pour la validation robuste.
+- **Upload** : `react-dropzone` pour la gestion intuitive des fichiers.
+- **UI** : `Tailwind CSS v4`, `Lucide React` (icônes), `Framer Motion` (animations).

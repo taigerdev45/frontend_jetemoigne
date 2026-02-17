@@ -56,8 +56,10 @@ Ce document détaille chaque étape technique pour la réalisation de la platefo
 
 ### 2.5 Soutien & Projets
 - [ ] Page Projets : Liste détaillée avec milestones.
-- [ ] Dashboard Transparence : Compteurs animés (Framer Motion `animateNumber`).
-- [ ] Formulaire de Don : 3 onglets (Shadcn Tabs), sélection de montant, upload de capture.
+- [x] Dashboard Transparence : Compteurs animés (Framer Motion `animateNumber`) et Jauge financière.
+- [x] Centre d'Action (Soutenir) : 3 onglets (Bénévolat, Partenariat, Don).
+- [x] Formulaire de Don : Sélection de montant, upload de capture (Dropzone).
+- [x] Formulaires Engagement : Bénévolat et Partenariat avec validation Zod.
 
 ### 2.6 Optimisations & Corrections (En cours)
 - [x] Migration Tailwind v4 (Gradients, Z-index).
