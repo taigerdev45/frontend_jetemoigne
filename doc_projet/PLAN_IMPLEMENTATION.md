@@ -83,9 +83,9 @@ Ce document détaille chaque étape technique pour la réalisation de la platefo
 - [ ] Setup 2FA : Intégration de la double authentification pour les rôles sensibles.
 
 ### 3.2 Dashboard & Statistiques
-- [ ] Sidebar : Navigation foncée (#1E3A8A), icônes Lucide-react.
-- [ ] Widgets KPI : Cartes avec mini-graphes (Recharts TinyLineChart).
-- [ ] Graphes principaux : Évolution des dons (AreaChart) et répartition des contenus (PieChart).
+- [x] Sidebar : Navigation foncée (#1E3A8A), icônes Lucide-react.
+- [x] Widgets KPI : Cartes avec mini-graphes (Recharts TinyLineChart).
+- [x] Graphes principaux : Évolution des dons (AreaChart) et répartition des contenus (PieChart).
 
 ### 3.3 Gestion des Modules (CRUD)
 - [ ] Finance : Tableau des transactions avec filtrage avancé et visionneuse de preuves (Zoom image).
