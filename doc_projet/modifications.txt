@@ -92,3 +92,10 @@
     - **Mise à jour des dégradés :** Remplacement des classes dépréciées `bg-gradient-to-*` par la nouvelle syntaxe `bg-linear-to-*` dans `CategoryMarquee` et autres composants, éliminant les avertissements de compilation.
 - **Expérience Utilisateur (Marquee) :**
     - **Pause au Survol :** Réintégration de la fonctionnalité de pause de l'animation (`animation-play-state: paused`) lors du survol de la souris sur les bandes défilantes, permettant à l'utilisateur de cliquer plus facilement sur une carte ou un partenaire.
+- **Menu Mobile (Header) :**
+    - **Problème résolu :** Le bouton "Menu" (hamburger) était inactif et le menu ne s'ouvrait pas sur mobile.
+    - **Solution :**
+        - Implémentation d'un état local `isMobileMenuOpen` pour gérer l'ouverture/fermeture.
+        - Ajout d'une interface de menu déroulant responsive avec `AnimatePresence` (framer-motion) pour une transition fluide.
+        - Remplacement de l'icône SVG statique par les icônes dynamiques `Menu` et `X` de `lucide-react`.
+        - Optimisation de l'affichage du bouton "Soutenir" : déplacé dans le menu déroulant sur les très petits écrans (`< sm`) pour éviter la surcharge du header.

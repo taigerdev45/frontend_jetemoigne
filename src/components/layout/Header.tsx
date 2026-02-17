@@ -4,9 +4,12 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Menu, X } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -60,29 +63,52 @@ const Header = () => {
 
         {/* Actions */}
         <div className="flex items-center space-x-4">
-          <Link href="/soutenir">
+          <Link href="/soutenir" className="hidden sm:block">
             <Button className="rounded-2xl bg-secondary hover:bg-primary text-white px-6 shadow-md transition-all">
               Soutenir
             </Button>
           </Link>
-          <Button variant="ghost" className="text-text-deep hover:bg-primary/10 rounded-2xl md:hidden">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-              />
-            </svg>
+          <Button 
+            variant="ghost" 
+            className="text-text-deep hover:bg-primary/10 rounded-2xl lg:hidden"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </Button>
         </div>
       </div>
+
+      {/* Mobile Menu Overlay */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="lg:hidden absolute top-full left-0 right-0 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-xl overflow-hidden"
+          >
+            <nav className="flex flex-col p-6 space-y-4">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className="text-lg font-medium text-text-deep/80 hover:text-primary transition-colors py-2 border-b border-gray-100 last:border-0"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {link.name}
+                </Link>
+              ))}
+              <div className="pt-4 sm:hidden">
+                <Link href="/soutenir" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button className="w-full rounded-2xl bg-secondary hover:bg-primary text-white py-6 shadow-md transition-all text-lg">
+                    Soutenir
+                  </Button>
+                </Link>
+              </div>
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 };
