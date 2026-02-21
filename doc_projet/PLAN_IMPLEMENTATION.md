@@ -73,6 +73,13 @@ Ce document détaille chaque étape technique pour la réalisation de la platefo
 - [x] Bibliothèque : Grille de livres avec badges (Gratuit/Prix) et bouton d'action.
 - [x] Mur Publicitaire : Grille multimédia pour les partenaires (Images/Vidéos).
 
+### 2.8 Intégration Paiement (Notch Pay)
+- [x] Analyse Endpoints Backend : `/api/v1/payments/initiate`.
+- [x] Adaptation Frontend : Connexion `DonationForm` avec l'API.
+- [x] Gestion du Retour : Pages de succès et d'annulation via URL params.
+- [x] Validation : Champs email et montants (Zod).
+- [x] Configuration Prod : Mise en place de `NEXT_PUBLIC_API_URL` (Render).
+
 ---
 
 ## Phase 3 : Interface Admin (Blue Control)

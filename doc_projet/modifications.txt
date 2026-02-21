@@ -363,3 +363,37 @@ Détails des ajouts :
 
 État : TERMINÉ (Frontend Mocké)
 Prochaine étape : Backend Integration & Auth.
+
+### [Date: 2026-02-21] - Intégration Paiement Notch Pay & Finalisation Admin
+
+### 1. Intégration Paiement (Backend -> Frontend)
+- **Analyse Backend :** Étude des endpoints payment.controller.ts (/api/v1/payments/initiate) et payment.service.ts pour comprendre le flux Notch Pay.
+- **Adaptation Frontend (DonationForm.tsx) :**
+    - **API Call :** Remplacement du mock par un appel réel etch vers le backend NestJS.
+    - **Champs Requis :** Ajout du champ email (obligatoire pour Notch Pay) avec validation Zod.
+    - **Gestion du Retour :** Implémentation de la logique de retour (callback_url) avec gestion des états success et canceled via window.location.search.
+    - **UX :** Affichage de messages de confirmation ou d'annulation dynamiques sans rechargement complet, nettoyage de l'URL après traitement.
+- **Sécurité :** Validation des données côté client avant envoi pour correspondre au DTO backend.
+
+### 2. Finalisation Modules Admin
+- **Correction Linter Globale :**
+    - Résolution de toutes les erreurs de linter dans les nouveaux modules Admin (Projets, RH, Pubs, Paramètres).
+    - Création du composant manquant Separator.
+    - Nettoyage des imports inutilisés et échappement des caractères JSX.
+- **Architecture :**
+    - Vérification de la cohérence des routes et de la navigation Sidebar.
+    - Préparation pour la liaison future avec les endpoints backend Admin (en attente d'implémentation backend).
+
+### 3. Documentation
+- **Traçabilité :** Mise à jour complète de modifications.txt et PLAN_IMPLEMENTATION.md.
+- **État :** Frontend prêt pour la phase de test d'intégration complète avec le backend local.
+
+### [Date: 2026-02-21] - Mise à jour URL Backend (Production)
+
+### 1. Configuration Environnement
+- **Création .env.local :** Ajout de la variable NEXT_PUBLIC_API_URL pointant vers le backend déployé sur Render (https://backend-jetemoigne-458j.onrender.com/api/v1).
+- **Sécurisation :** Centralisation de l'URL de l'API pour faciliter les changements d'environnement (Dev/Prod).
+
+### 2. Adaptation Frontend
+- **DonationForm.tsx :** Remplacement de l'URL hardcodée http://localhost:3001 par process.env.NEXT_PUBLIC_API_URL (avec fallback sur l'URL de production).
+- **Validation :** Le formulaire de don pointe désormais vers l'instance de production pour les tests d'intégration réels.
