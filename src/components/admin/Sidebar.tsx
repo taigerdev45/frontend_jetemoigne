@@ -11,7 +11,8 @@ import {
   Users,
   Settings,
   BookOpen,
-  LogOut
+  LogOut,
+  MessageSquare
 } from "lucide-react";
 
 const NAV_ITEMS = [

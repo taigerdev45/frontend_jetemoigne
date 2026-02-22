@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Loader2, Send } from "lucide-react";
 import { useState } from "react";
+import { api } from "@/lib/api";
 
 const formSchema = z.object({
   organizationName: z.string().min(2, "Nom de l'organisation requis"),
@@ -27,11 +28,19 @@ export function PartnershipForm() {
 
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    console.log("Partnership Data:", data);
-    alert("Demande de partenariat envoyée !");
-    reset();
-    setIsSubmitting(false);
+    try {
+      await api.support.createPartner({
+        name: data.organizationName,
+        activityDomain: data.type,
+      });
+      alert("Demande de partenariat envoyée !");
+      reset();
+    } catch (error) {
+      console.error("Erreur lors de l'envoi :", error);
+      alert("Une erreur est survenue lors de l'envoi de votre demande.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

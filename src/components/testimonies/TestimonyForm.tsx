@@ -9,43 +9,22 @@ import { useDropzone } from "react-dropzone";
 import { Check, ChevronRight, Upload, Video, Mic, FileText, AlertCircle, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// --- Validation Schemas ---
-const step1Schema = z.object({
-  firstName: z.string().min(2, "Le prénom est requis"),
-  lastName: z.string().min(2, "Le nom est requis"),
-  email: z.string().email("Email invalide"),
-  isAnonymous: z.boolean().default(false),
-  // Optional placeholders for step 2 fields to satisfy TypeScript
-  type: z.enum(["video", "audio", "text"]).optional(),
-  title: z.string().optional(),
-  content: z.string().optional(),
-  file: z.any().optional(),
-});
+import { api } from "@/lib/api";
 
-const step2Schema = z.object({
-  // Optional placeholders for step 1 fields
-  firstName: z.string().optional(),
-  lastName: z.string().optional(),
-  email: z.string().optional(),
-  isAnonymous: z.boolean().optional(),
-  
-  type: z.enum(["video", "audio", "text"]),
-  title: z.string().min(5, "Le titre doit faire au moins 5 caractères"),
-  content: z.string().optional(), // For text content
-  file: z.any().optional(), // For video/audio file
-});
-
-// Combined schema for final submission
+// --- Validation Schema ---
 export const formSchema = z.object({
   firstName: z.string().min(2, "Le prénom est requis"),
   lastName: z.string().min(2, "Le nom est requis"),
   email: z.string().email("Email invalide"),
-  isAnonymous: z.boolean().default(false),
-  type: z.enum(["video", "audio", "text"]),
+  isAnonymous: z.boolean(),
+  type: z.enum(["video", "audio", "ecrit"]),
   title: z.string().min(5, "Le titre doit faire au moins 5 caractères"),
   content: z.string().optional(),
   file: z.any().optional(),
 });
+
+const STEP1_FIELDS = ["firstName", "lastName", "email", "isAnonymous"] as const;
+const STEP2_FIELDS = ["type", "title", "content", "file"] as const;
 
 type FormData = z.infer<typeof formSchema>;
 
@@ -61,19 +40,18 @@ export const TestimonyForm = () => {
     trigger,
     control,
     formState: { errors },
+    reset
   } = useForm<FormData>({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(step === 1 ? step1Schema : step2Schema) as any,
+    resolver: zodResolver(formSchema),
     defaultValues: {
       isAnonymous: false,
-      type: "text",
+      type: "ecrit",
     },
   });
 
   const watchType = useWatch({ control, name: "type" });
   const watchFile = useWatch({ control, name: "file" });
 
-  // Dropzone configuration
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: watchType === "video" 
       ? { "video/*": [] } 
@@ -82,27 +60,48 @@ export const TestimonyForm = () => {
     onDrop: (acceptedFiles) => {
       const file = acceptedFiles[0];
       setValue("file", file);
-      // Create preview URL
       const url = URL.createObjectURL(file);
       setPreview(url);
     },
   });
 
   const nextStep = async () => {
-    const isValid = await trigger();
+    const fieldsToValidate = step === 1 ? [...STEP1_FIELDS] : [...STEP2_FIELDS];
+    const isValid = await trigger(fieldsToValidate);
     if (isValid) setStep((s) => s + 1);
   };
 
   const prevStep = () => setStep((s) => s - 1);
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: TestimonyFormValues) => {
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    console.log("Form Data:", data);
-    alert("Témoignage envoyé avec succès !");
-    setIsSubmitting(false);
-    // Reset or redirect
+    try {
+      const formData = new FormData();
+      formData.append("authorName", data.isAnonymous ? "Anonyme" : `${data.firstName} ${data.lastName}`);
+      formData.append("authorEmail", data.email);
+      formData.append("title", data.title);
+      formData.append("mediaType", data.type); // "ecrit", "video", "audio"
+      
+      if (data.content) {
+        formData.append("contentText", data.content);
+      }
+      
+      if (data.file) {
+        formData.append("file", data.file);
+      }
+
+      await api.testimonies.create(formData);
+      
+      alert("Témoignage envoyé avec succès ! Il sera examiné avant publication.");
+      reset();
+      setStep(1);
+      setPreview(null);
+    } catch (error) {
+      console.error("Erreur envoi témoignage:", error);
+      alert("Une erreur est survenue lors de l'envoi.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -191,14 +190,14 @@ export const TestimonyForm = () => {
                  <label className="text-sm font-medium mb-2 block">Type de témoignage</label>
                  <div className="grid grid-cols-3 gap-4">
                     {[
-                      { id: "text", icon: FileText, label: "Écrit" },
+                      { id: "ecrit", icon: FileText, label: "Écrit" },
                       { id: "audio", icon: Mic, label: "Audio" },
                       { id: "video", icon: Video, label: "Vidéo" }
                     ].map((type) => (
                       <button
                         key={type.id}
                         type="button"
-                        onClick={() => setValue("type", type.id as "video" | "audio" | "text")}
+                        onClick={() => setValue("type", type.id as "ecrit" | "audio" | "video")}
                         className={cn(
                           "flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all",
                           watchType === type.id 
@@ -223,15 +222,16 @@ export const TestimonyForm = () => {
                 {errors.title && <p className="text-red-500 text-xs">{errors.title.message}</p>}
               </div>
 
-              {watchType === "text" ? (
+              {watchType === "ecrit" ? (
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Votre histoire</label>
+                  <label className="text-sm font-medium">Votre témoignage</label>
                   <textarea
                     {...register("content")}
-                    rows={8}
+                    rows={6}
                     className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none resize-none"
-                    placeholder="Racontez-nous votre expérience..."
+                    placeholder="Racontez-nous votre histoire..."
                   />
+                  {errors.content && <p className="text-red-500 text-xs">{errors.content.message}</p>}
                 </div>
               ) : (
                 <div className="space-y-2">

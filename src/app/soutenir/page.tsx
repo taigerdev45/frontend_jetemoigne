@@ -1,13 +1,27 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { TransparencyDashboard } from "@/components/soutenir/TransparencyDashboard";
 import { ActionCenter } from "@/components/soutenir/ActionCenter";
-import { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Nous Soutenir - Je Témoigne",
-  description: "Participez à l'œuvre par vos dons, votre bénévolat ou un partenariat.",
-};
+import { api } from "@/lib/api";
+import type { PublicHubStats } from "@/types";
 
 export default function SoutenirPage() {
+  const [stats, setStats] = useState<PublicHubStats | null>(null);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const data = await api.publicHub.stats();
+        setStats(data);
+      } catch (error) {
+        console.error("Failed to fetch stats:", error);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
   return (
     <main className="min-h-screen pt-20">
       {/* Hero Section */}
@@ -19,12 +33,12 @@ export default function SoutenirPage() {
             Ensemble, Impactons des Vies
           </h1>
           <p className="text-xl text-blue-100 max-w-2xl mx-auto">
-            Votre soutien est le moteur de notre mission. Découvrez comment vous pouvez contribuer aujourd&apos;hui.
+            Votre soutien est le moteur de notre mission. Decouvrez comment vous pouvez contribuer aujourd&apos;hui.
           </p>
         </div>
       </section>
 
-      <TransparencyDashboard />
+      <TransparencyDashboard stats={stats} />
       <ActionCenter />
     </main>
   );

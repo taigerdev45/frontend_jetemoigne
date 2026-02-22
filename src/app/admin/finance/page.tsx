@@ -1,178 +1,212 @@
 "use client";
 
-import { useState } from "react";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import { useState, useEffect, useCallback } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { Check, X, CreditCard, Banknote, Package, Filter, Eye } from "lucide-react";
-import { FinanceTransaction } from "@/types";
+import { Check, X, CreditCard, Banknote, Filter, Loader2 } from "lucide-react";
+import { Transaction, TransactionStatus } from "@/types";
+import { api } from "@/lib/api";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-// Mock Data
-const MOCK_TRANSACTIONS: FinanceTransaction[] = [
-  {
-    id: "1",
-    date: "2024-03-15T14:30:00",
-    type: "financier",
-    category: "don",
-    amount: 50.00,
-    sender: "Jean Dupont",
-    status: "verified",
-  },
-  {
-    id: "2",
-    date: "2024-03-14T10:15:00",
-    type: "financier",
-    category: "ouvrage",
-    amount: 10000.00,
-    sender: "Marie Curie",
-    status: "pending",
-    proofUrl: "/proofs/donation-2.jpg",
-  },
-  {
-    id: "3",
-    date: "2024-03-13T09:00:00",
-    type: "materiel",
-    category: "don",
-    amount: 0, // Material donation
-    sender: "Anonyme",
-    status: "rejected",
-  },
-  {
-    id: "4",
-    date: "2024-03-12T16:45:00",
-    type: "financier",
-    category: "pub",
-    amount: 150.00,
-    sender: "Entreprise XYZ",
-    status: "verified",
-  },
-];
-
 export default function FinancePage() {
-  const [transactions] = useState<FinanceTransaction[]>(MOCK_TRANSACTIONS);
-  const [filterType, setFilterType] = useState<string>("all");
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [filterStatus, setFilterStatus] = useState<string>("all");
 
-  const filteredTransactions = transactions.filter((t) => {
-    if (filterType === "all") return true;
-    return t.category === filterType;
-  });
+  const fetchTransactions = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const statusParam = filterStatus === "all" ? undefined : (filterStatus as TransactionStatus);
+      const data = await api.admin.finances.findAll(statusParam);
+      setTransactions(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Failed to fetch transactions:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [filterStatus]);
 
-  const getStatusBadge = (status: string) => {
+  useEffect(() => {
+    fetchTransactions();
+  }, [fetchTransactions]);
+
+  const handleValidate = async (id: string) => {
+    try {
+      const updated = await api.admin.finances.validate(id);
+      setTransactions(transactions.map((t) =>
+        t.id === id ? { ...t, status: updated.status } : t
+      ));
+    } catch (error) {
+      console.error("Failed to validate transaction:", error);
+      alert("Erreur lors de la validation.");
+    }
+  };
+
+  const handleReject = async (id: string) => {
+    if (!confirm("Etes-vous sur de vouloir rejeter cette transaction ?")) return;
+    try {
+      const updated = await api.admin.finances.reject(id);
+      setTransactions(transactions.map((t) =>
+        t.id === id ? { ...t, status: updated.status } : t
+      ));
+    } catch (error) {
+      console.error("Failed to reject transaction:", error);
+      alert("Erreur lors du rejet.");
+    }
+  };
+
+  const getStatusBadge = (status?: TransactionStatus) => {
     switch (status) {
-      case "verified":
-        return <Badge className="bg-green-500 hover:bg-green-600">Vérifié</Badge>;
-      case "pending":
+      case "verifie":
+        return <Badge className="bg-green-500 hover:bg-green-600">Verifie</Badge>;
+      case "en_attente":
         return <Badge className="bg-orange-500 hover:bg-orange-600">En attente</Badge>;
-      case "rejected":
-        return <Badge variant="destructive">Rejeté</Badge>;
+      case "rejete":
+        return <Badge variant="destructive">Rejete</Badge>;
       default:
-        return <Badge variant="secondary">{status}</Badge>;
+        return <Badge variant="secondary">{status || "Inconnu"}</Badge>;
     }
   };
 
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case "financier": return <Banknote className="h-4 w-4 text-green-500" />;
-      case "materiel": return <Package className="h-4 w-4 text-blue-500" />;
-      default: return <CreditCard className="h-4 w-4 text-gray-500" />;
+  const getTypeIcon = (paymentMethod?: string | null) => {
+    if (paymentMethod === "notchpay" || paymentMethod === "online") {
+      return <span title="Paiement en ligne"><CreditCard className="h-4 w-4 text-purple-500" /></span>;
     }
+    return <span title="Virement / Manuel"><Banknote className="h-4 w-4 text-green-500" /></span>;
   };
 
-  const formatAmount = (amount: number) => {
-    return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amount); // Assuming EUR for simplicity, or convert based on context
+  const formatAmount = (amount: string | number, currency: string | null = "XAF") => {
+    const num = typeof amount === "string" ? parseFloat(amount) : amount;
+    if (isNaN(num)) return String(amount);
+    return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: currency || 'XAF' }).format(num);
   };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight text-text-deep">Gestion Financière</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-text-deep">Gestion Financiere (Dons)</h1>
         <div className="flex gap-2 items-center">
-            <Select value={filterType} onValueChange={setFilterType}>
+            <Select value={filterStatus} onValueChange={setFilterStatus}>
               <SelectTrigger className="w-[180px]">
                 <Filter className="w-4 h-4 mr-2" />
-                <SelectValue placeholder="Filtrer par type" />
+                <SelectValue placeholder="Filtrer par statut" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Tous les types</SelectItem>
-                <SelectItem value="ouvrage">Ouvrage</SelectItem>
-                <SelectItem value="pub">Publicité</SelectItem>
-                <SelectItem value="don">Don</SelectItem>
+                <SelectItem value="all">Tous les statuts</SelectItem>
+                <SelectItem value="en_attente">En attente</SelectItem>
+                <SelectItem value="verifie">Verifie</SelectItem>
+                <SelectItem value="rejete">Rejete</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="outline">Exporter CSV</Button>
-            <Button>Nouveau Don</Button>
         </div>
       </div>
 
       <div className="rounded-md border bg-white shadow-sm">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Type</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Émetteur</TableHead>
-              <TableHead>Catégorie</TableHead>
-              <TableHead>Montant / Détail</TableHead>
-              <TableHead>Preuve</TableHead>
-              <TableHead>Statut</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredTransactions.map((transaction) => (
-              <TableRow key={transaction.id}>
-                <TableCell>{getTypeIcon(transaction.type)}</TableCell>
-                <TableCell>{format(new Date(transaction.date), "dd MMM yyyy", { locale: fr })}</TableCell>
-                <TableCell className="font-medium">{transaction.sender}</TableCell>
-                <TableCell>
-                  <Badge variant="outline" className="capitalize">{transaction.category}</Badge>
-                </TableCell>
-                <TableCell>
-                  {transaction.type === "financier" ? formatAmount(transaction.amount) : "Matériel"}
-                </TableCell>
-                <TableCell>
-                  {transaction.proofUrl ? (
-                    <Button variant="link" className="h-auto p-0 text-blue-600" asChild>
-                      <a href={transaction.proofUrl} target="_blank" rel="noopener noreferrer">
-                        Voir la preuve
-                      </a>
-                    </Button>
-                  ) : (
-                    <span className="text-slate-400 text-xs italic">Aucune</span>
-                  )}
-                </TableCell>
-                <TableCell>{getStatusBadge(transaction.status)}</TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
-                    {transaction.status === "pending" && (
-                      <>
-                        <Button size="icon" variant="ghost" className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50">
-                          <Check className="h-4 w-4" />
-                        </Button>
-                        <Button size="icon" variant="ghost" className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50">
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </>
-                    )}
-                    <Button size="icon" variant="ghost" className="h-8 w-8">
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </TableCell>
+        {isLoading ? (
+          <div className="flex justify-center items-center py-20">
+            <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Mode</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Donateur</TableHead>
+                <TableHead>Contact</TableHead>
+                <TableHead>Montant</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>Preuve</TableHead>
+                <TableHead>Statut</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {transactions.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={9} className="text-center py-10 text-slate-500">
+                    Aucune transaction trouvee.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                transactions.map((transaction) => (
+                  <TableRow key={transaction.id}>
+                    <TableCell>{getTypeIcon(transaction.paymentMethod)}</TableCell>
+                    <TableCell>
+                      {transaction.createdAt ? format(new Date(transaction.createdAt), "dd MMM yyyy HH:mm", { locale: fr }) : "-"}
+                    </TableCell>
+                    <TableCell className="font-medium">{transaction.donorName || "Anonyme"}</TableCell>
+                    <TableCell>
+                      <div className="flex flex-col text-xs text-muted-foreground">
+                        <span>{transaction.donorEmail}</span>
+                        <span>{transaction.donorPhone}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="font-bold text-slate-700">
+                      {formatAmount(transaction.amount, transaction.currency)}
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-xs text-slate-500">{transaction.transactionType}</span>
+                    </TableCell>
+                    <TableCell>
+                      {transaction.proofScreenshotUrl ? (
+                        <Button variant="link" className="h-auto p-0 text-blue-600" asChild>
+                          <a href={transaction.proofScreenshotUrl} target="_blank" rel="noopener noreferrer">
+                            Voir la preuve
+                          </a>
+                        </Button>
+                      ) : (
+                        <span className="text-slate-400 text-xs italic">Aucune</span>
+                      )}
+                    </TableCell>
+                    <TableCell>{getStatusBadge(transaction.status)}</TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-1">
+                        {transaction.status === "en_attente" && (
+                          <>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-8 w-8"
+                              title="Valider"
+                              onClick={() => handleValidate(transaction.id)}
+                            >
+                              <Check className="h-4 w-4 text-green-500" />
+                            </Button>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-8 w-8"
+                              title="Rejeter"
+                              onClick={() => handleReject(transaction.id)}
+                            >
+                              <X className="h-4 w-4 text-red-500" />
+                            </Button>
+                          </>
+                        )}
+                        {transaction.transactionRefId && (
+                          <span className="text-xs text-slate-400 ml-2" title="Ref. transaction">
+                            Ref: {transaction.transactionRefId}
+                          </span>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        )}
       </div>
     </div>
   );

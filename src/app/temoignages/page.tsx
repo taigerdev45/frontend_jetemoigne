@@ -1,82 +1,49 @@
 "use client";
 
-import { useState } from "react";
-import { Plus, Search } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Plus, Search, Loader2 } from "lucide-react";
 import { TestimonyCard } from "@/components/testimonies/TestimonyCard";
 import { Testimony } from "@/types";
 import { TestimonyForm } from "@/components/testimonies/TestimonyForm";
 import { CategoryFilters } from "@/components/ui/CategoryFilters";
 import { Modal } from "@/components/ui/modal";
-
-const TESTIMONIES: Testimony[] = [
-  {
-    id: "1",
-    type: "video",
-    title: "Guéri miraculeusement après 10 ans de maladie",
-    content: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", // Mock URL
-    thumbnail: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    duration: "12:45",
-    author: { name: "Sarah Connor", avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d" },
-    date: "Il y a 2 jours",
-    category: "Guérison",
-  },
-  {
-    id: "2",
-    type: "audio",
-    title: "Comment j'ai retrouvé la paix intérieure",
-    content: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", // Mock Audio
-    author: { name: "Marc Dupont", avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024d" },
-    date: "Il y a 1 semaine",
-    category: "Délivrance",
-  },
-  {
-    id: "3",
-    type: "text",
-    title: "Une rencontre inattendue",
-    content: "C'était un soir d'hiver, je marchais seul dans la rue quand soudain une lumière m'a ébloui. J'ai senti une chaleur envahir mon cœur et j'ai su que je n'étais plus seul. Depuis ce jour, ma vie a complètement changé. J'ai trouvé une communauté aimante et un but à mon existence.",
-    author: { name: "Julie Martin" },
-    date: "Il y a 3 semaines",
-    category: "Foi",
-  },
-  {
-    id: "4",
-    type: "video",
-    title: "Témoignage de restauration familiale",
-    content: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-    thumbnail: "https://images.unsplash.com/photo-1511895426328-dc8714191300?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    duration: "08:30",
-    author: { name: "Paul & Marie", avatar: "https://i.pravatar.cc/150?u=a042581f4e29026703d" },
-    date: "Il y a 1 mois",
-    category: "Famille",
-  },
-  {
-    id: "5",
-    type: "text",
-    title: "Sorti de la dépression",
-    content: "Pendant des années, j'ai lutté contre des pensées sombres. Rien ne semblait pouvoir m'aider, ni les médicaments ni les thérapies. Un jour, un ami m'a invité à une réunion de prière. J'y suis allé à reculons, mais ce que j'y ai vécu dépasse l'entendement...",
-    author: { name: "Thomas L." },
-    date: "Il y a 2 mois",
-    category: "Guérison",
-  },
-];
+import { api } from "@/lib/api";
 
 const FILTERS = [
   { value: "all", label: "Tous" },
-  { value: "Guérison", label: "Guérison" },
-  { value: "Délivrance", label: "Délivrance" },
-  { value: "Foi", label: "Foi" },
-  { value: "Famille", label: "Famille" },
+  { value: "video", label: "Vidéos" },
+  { value: "audio", label: "Audios" },
+  { value: "ecrit", label: "Écrits" },
 ];
 
 export default function TemoignagesPage() {
+  const [testimonies, setTestimonies] = useState<Testimony[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState("all");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredTestimonies = TESTIMONIES.filter((t) => {
-    const matchesFilter = activeFilter === "all" || t.category === activeFilter;
-    const matchesSearch = t.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          t.author.name.toLowerCase().includes(searchQuery.toLowerCase());
+  useEffect(() => {
+    const fetchTestimonies = async () => {
+      try {
+        const data = await api.testimonies.findAll();
+        // Access .items from PaginatedResponse and filter validated testimonies
+        const validated = (data.items || []).filter((t: Testimony) => t.status === "valide");
+        setTestimonies(validated);
+      } catch (error) {
+        console.error("Failed to fetch testimonies:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTestimonies();
+  }, []);
+
+  const filteredTestimonies = testimonies.filter((t) => {
+    const matchesFilter = activeFilter === "all" || t.mediaType === activeFilter;
+    const matchesSearch = (t.title || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          (t.authorName || "").toLowerCase().includes(searchQuery.toLowerCase());
     return matchesFilter && matchesSearch;
   });
 
@@ -125,16 +92,22 @@ export default function TemoignagesPage() {
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredTestimonies.map((testimony) => (
-          <div key={testimony.id} className="h-full">
-            <TestimonyCard testimony={testimony} />
-          </div>
-        ))}
-      </div>
+      {isLoading ? (
+        <div className="flex justify-center items-center py-20">
+          <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredTestimonies.map((testimony) => (
+            <div key={testimony.id} className="h-full">
+              <TestimonyCard testimony={testimony} />
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Empty State */}
-      {filteredTestimonies.length === 0 && (
+      {!isLoading && filteredTestimonies.length === 0 && (
          <div className="text-center py-20">
             <p className="text-slate-500 text-lg">Aucun témoignage ne correspond à votre recherche.</p>
          </div>

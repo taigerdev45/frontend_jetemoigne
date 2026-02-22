@@ -1,68 +1,34 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ProjectCard } from "@/components/projects/ProjectCard";
 import { Project } from "@/types";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles } from "lucide-react";
-
-// Mock Data for Projects
-const PROJECTS: Project[] = [
-  {
-    id: "1",
-    title: "Construction du Studio TV",
-    description: "Aidez-nous à bâtir un studio professionnel pour produire des émissions de qualité et diffuser l'Évangile à grande échelle.",
-    image: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&q=80&w=800",
-    category: "Infrastructure",
-    goal: 15000000,
-    raised: 8500000,
-    donorsCount: 124,
-    endDate: "2026-12-31",
-    status: "active",
-    milestones: [
-      { title: "Acquisition du terrain", date: "2025-01-15", completed: true },
-      { title: "Fondations", date: "2025-06-01", completed: false }
-    ]
-  },
-  {
-    id: "2",
-    title: "Campagne d'Évangélisation 2026",
-    description: "Soutenez notre grande tournée nationale pour apporter le message d'espoir dans 10 villes du pays.",
-    image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&q=80&w=800",
-    category: "Mission",
-    goal: 5000000,
-    raised: 1200000,
-    donorsCount: 45,
-    endDate: "2026-08-15",
-    status: "active"
-  },
-  {
-    id: "3",
-    title: "Application Mobile Jetemoigne",
-    description: "Financement du développement de l'application mobile pour rendre les témoignages accessibles partout, même hors ligne.",
-    image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&q=80&w=800",
-    category: "Technologie",
-    goal: 3000000,
-    raised: 2800000,
-    donorsCount: 89,
-    endDate: "2026-05-30",
-    status: "active"
-  },
-  {
-    id: "4",
-    title: "Formation des Bénévoles",
-    description: "Programme de formation pour équiper nos 50 bénévoles avec les compétences techniques et spirituelles nécessaires.",
-    image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=800",
-    category: "Formation",
-    goal: 1000000,
-    raised: 1000000,
-    donorsCount: 30,
-    endDate: "2026-03-01",
-    status: "completed"
-  }
-];
+import { ArrowRight, Sparkles, Loader2 } from "lucide-react";
+import { api } from "@/lib/api";
 
 export default function ProjectsPage() {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const data = await api.projects.findAll();
+        // Filter or sort if needed. The API should return active projects or all projects.
+        // Assuming findAll returns an array of projects.
+        setProjects(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Failed to fetch projects:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
   return (
     <div className="min-h-screen bg-slate-50/50">
       {/* Hero Section */}
@@ -93,20 +59,32 @@ export default function ProjectsPage() {
       {/* Projects Grid */}
       <section className="pb-32 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {PROJECTS.map((project, index) => (
-              <motion.div
-                key={project.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="h-full"
-              >
-                <ProjectCard project={project as Project} />
-              </motion.div>
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="flex justify-center items-center py-20">
+              <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {projects.map((project, index) => (
+                <motion.div
+                  key={project.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="h-full"
+                >
+                  <ProjectCard project={project} />
+                </motion.div>
+              ))}
+            </div>
+          )}
+
+          {!isLoading && projects.length === 0 && (
+             <div className="text-center py-20">
+                <p className="text-slate-500 text-lg">Aucun projet pour le moment.</p>
+             </div>
+          )}
 
           {/* Empty State / CTA */}
           <div className="mt-20 text-center bg-white rounded-3xl p-12 border border-border shadow-sm max-w-4xl mx-auto">

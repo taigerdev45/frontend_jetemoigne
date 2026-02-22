@@ -3,15 +3,7 @@
 import Image from "next/image";
 import { ExternalLink, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-export interface Ad {
-  id: string;
-  title: string;
-  mediaUrl?: string; // Image or Video URL
-  type: "image" | "video";
-  link?: string;
-  partnerName: string;
-}
+import { Ad } from "@/types";
 
 interface AdWallProps {
   ads: Ad[];
@@ -23,9 +15,9 @@ export const AdWall = ({ ads }: AdWallProps) => {
       {ads.map((ad, index) => {
         // Feature logic: highlight every 3rd item as larger (span 2 cols) if enough space
         const isFeatured = index % 5 === 0;
-        
+
         return (
-          <div 
+          <div
             key={ad.id}
             className={cn(
               "group relative rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 shadow-sm hover:shadow-xl transition-all duration-500",
@@ -34,15 +26,14 @@ export const AdWall = ({ ads }: AdWallProps) => {
           >
             {/* Media Content */}
             <div className="absolute inset-0 w-full h-full">
-                {ad.type === "video" ? (
+                {ad.mediaType === "video" ? (
                     <div className="relative w-full h-full">
-                        <video 
-                            src={ad.mediaUrl} 
+                        <video
+                            src={ad.mediaUrl}
                             className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"
                             muted
                             loop
                             playsInline
-                            // Note: autoplay might be restricted by browser policies
                         />
                         <div className="absolute inset-0 flex items-center justify-center bg-black/10 group-hover:bg-transparent transition-colors">
                             <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -54,7 +45,7 @@ export const AdWall = ({ ads }: AdWallProps) => {
                     ad.mediaUrl ? (
                         <Image
                             src={ad.mediaUrl}
-                            alt={ad.title}
+                            alt={ad.clientName}
                             fill
                             className="object-cover transition-transform duration-700 group-hover:scale-105"
                             unoptimized
@@ -72,16 +63,16 @@ export const AdWall = ({ ads }: AdWallProps) => {
             <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
                 <div className="flex justify-between items-end">
                     <div>
-                        <p className="text-blue-300 text-xs font-bold uppercase tracking-wider mb-1">{ad.partnerName}</p>
+                        <p className="text-blue-300 text-xs font-bold uppercase tracking-wider mb-1">{ad.clientName}</p>
                         <h3 className={cn("text-white font-bold leading-tight drop-shadow-md", isFeatured ? "text-2xl" : "text-lg")}>
-                            {ad.title}
+                            {ad.clientName}
                         </h3>
                     </div>
-                    
-                    {ad.link && (
-                        <a 
-                            href={ad.link} 
-                            target="_blank" 
+
+                    {ad.redirectUrl && (
+                        <a
+                            href={ad.redirectUrl}
+                            target="_blank"
                             rel="noopener noreferrer"
                             className="p-2 bg-white/10 hover:bg-white/30 backdrop-blur-md rounded-full text-white transition-colors opacity-0 group-hover:opacity-100"
                             title="Visiter le site"

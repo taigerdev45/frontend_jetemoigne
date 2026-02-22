@@ -3,14 +3,14 @@
 import React from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { MarqueeItem } from "@/components/home/CategoryMarquee";
+import { Program } from "@/types";
 
 interface ProgramCardProps {
-  item: MarqueeItem;
+  program: Program;
   onClick?: () => void;
 }
 
-export const ProgramCard = ({ item, onClick }: ProgramCardProps) => {
+export const ProgramCard = ({ program, onClick }: ProgramCardProps) => {
   return (
     <div
       onClick={onClick}
@@ -20,10 +20,10 @@ export const ProgramCard = ({ item, onClick }: ProgramCardProps) => {
     >
       {/* Background Image Placeholder */}
       <div className="absolute inset-0 bg-gray-100 group-hover:scale-105 transition-transform duration-700">
-         {item.image ? (
+         {program.thumbnailUrl ? (
             <Image 
-              src={item.image} 
-              alt={item.title} 
+              src={program.thumbnailUrl} 
+              alt={program.title} 
               fill
               className="object-cover"
               unoptimized
@@ -38,13 +38,13 @@ export const ProgramCard = ({ item, onClick }: ProgramCardProps) => {
 
       {/* Content */}
       <div className="relative z-10 p-6 flex flex-col justify-end h-full">
-        {item.subtitle && (
+        {program.category && (
           <span className="text-xs font-bold uppercase tracking-wider text-blue-300 mb-2 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-            {item.subtitle}
+            {program.category.replace('_', ' ')}
           </span>
         )}
         <h3 className="text-2xl font-bold text-white leading-tight group-hover:text-blue-50 transition-colors mb-4">
-          {item.title}
+          {program.title}
         </h3>
         
         <div className="w-full h-1 bg-blue-500 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />

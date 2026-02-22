@@ -8,11 +8,15 @@ import { useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import { cn } from "@/lib/utils";
 
+import { api } from "@/lib/api";
+
 const formSchema = z.object({
+  name: z.string().min(2, "Le nom est requis"),
+  email: z.string().email("Veuillez entrer une adresse email valide"),
+  phone: z.string().optional(),
   amount: z.number().min(1, "Le montant doit être supérieur à 1€"),
   customAmount: z.string().optional(),
   method: z.enum(["card", "paypal", "transfer"]),
-  email: z.string().email("Veuillez entrer une adresse email valide"),
   proof: z.any().optional(),
 });
 
@@ -24,7 +28,7 @@ export function DonationForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState<'idle' | 'success' | 'canceled'>('idle');
 
-  const { control, handleSubmit, setValue, formState: { errors }, reset } = useForm<FormData>({
+  const { register, control, handleSubmit, setValue, formState: { errors }, reset } = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       amount: 50,
@@ -71,41 +75,44 @@ export function DonationForm() {
     setIsSubmitting(true);
     try {
       if (data.method === "card") {
-        // Notch Pay Integration
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://backend-jetemoigne-458j.onrender.com";
-        const response = await fetch(`${apiUrl}/payments/initiate`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            amount: data.amount,
-            currency: "XAF", // Default to XAF as per backend requirement
-            email: data.email,
-            description: `Don de ${data.amount} (Devise originale)`,
-            callback_url: window.location.origin + "/soutenir?status=success",
-          }),
+        // Notch Pay Integration (Automated)
+        const response = await api.support.initiatePayment({
+          donorName: data.name,
+          donorEmail: data.email,
+          donorPhone: data.phone,
+          amount: data.amount,
+          currency: "XAF",
         });
 
-        if (!response.ok) {
-          throw new Error("Erreur lors de l'initialisation du paiement");
-        }
-
-        const result = await response.json();
-        if (result.authorization_url) {
-          window.location.href = result.authorization_url;
+        if (response.payment_url) {
+          window.location.href = response.payment_url;
           return;
         }
       } else {
-        // Fallback for other methods (mock)
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        console.log("Donation Data:", data);
-        alert("Merci pour votre don ! (Simulation)");
+        // Manual Payment (Transfer/PayPal) - Requires Proof
+        if (!data.proof) {
+          alert("Pour les virements ou PayPal, veuillez télécharger une preuve de paiement (Capture d'écran).");
+          setIsSubmitting(false);
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("donorName", data.name);
+        formData.append("donorEmail", data.email);
+        if (data.phone) formData.append("donorPhone", data.phone);
+        formData.append("amount", data.amount.toString());
+        formData.append("currency", "XAF");
+        formData.append("transactionReference", `MANUAL-${Date.now()}`); // Temporary Ref
+        formData.append("file", data.proof);
+
+        await api.support.createDonation(formData);
+        
+        setPaymentStatus('success');
         reset();
       }
     } catch (error) {
       console.error("Payment Error:", error);
-      alert("Une erreur est survenue lors du paiement. Veuillez réessayer.");
+      alert("Une erreur est survenue lors du traitement. Veuillez réessayer.");
     } finally {
       setIsSubmitting(false);
     }
@@ -191,13 +198,37 @@ export function DonationForm() {
           {errors.amount && <p className="text-red-500 text-xs">{errors.amount.message}</p>}
         </div>
 
+        {/* Personal Info */}
+        <div className="grid md:grid-cols-2 gap-4">
+          <div className="space-y-3">
+            <label className="text-sm font-medium">Nom complet</label>
+            <input
+              type="text"
+              placeholder="Jean Dupont"
+              {...register("name")}
+              className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+            {errors.name && <p className="text-red-500 text-xs">{errors.name.message}</p>}
+          </div>
+
+          <div className="space-y-3">
+            <label className="text-sm font-medium">Téléphone (Optionnel)</label>
+            <input
+              type="tel"
+              placeholder="+241 00 00 00 00"
+              {...register("phone")}
+              className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+          </div>
+        </div>
+
         {/* Email */}
         <div className="space-y-3">
             <label className="text-sm font-medium">Email</label>
             <input
                 type="email"
                 placeholder="votre@email.com"
-                {...control.register("email")}
+                {...register("email")}
                 className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-blue-500 outline-none"
             />
             {errors.email && <p className="text-red-500 text-xs">{errors.email.message}</p>}

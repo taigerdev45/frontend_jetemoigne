@@ -4,23 +4,15 @@ import Image from "next/image";
 import { Download, ShoppingCart, BookOpen } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-
-export interface Book {
-  id: string;
-  title: string;
-  author: string;
-  description?: string;
-  price?: number; // if 0 or undefined, it's free
-  coverUrl?: string;
-  pdfUrl?: string;
-  isFree: boolean;
-}
+import { Book } from "@/types";
 
 interface BookCardProps {
   book: Book;
 }
 
 export const BookCard = ({ book }: BookCardProps) => {
+  const isFree = book.isFree || !book.price || parseFloat(book.price) === 0;
+
   return (
     <div className="group flex flex-col bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all duration-300 h-full">
       {/* Cover */}
@@ -42,7 +34,7 @@ export const BookCard = ({ book }: BookCardProps) => {
         
         {/* Badge Price/Free */}
         <div className="absolute top-3 right-3 z-10">
-          {book.isFree ? (
+          {isFree ? (
             <Badge className="bg-emerald-500 hover:bg-emerald-600 border-none text-white shadow-sm">Gratuit</Badge>
           ) : (
             <Badge variant="secondary" className="font-bold bg-white/90 backdrop-blur-sm text-slate-900 shadow-sm">
@@ -60,7 +52,7 @@ export const BookCard = ({ book }: BookCardProps) => {
         <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 font-medium">{book.author}</p>
         
         <div className="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800">
-            {book.isFree ? (
+            {isFree ? (
                  <Button className="w-full gap-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl" size="sm">
                     <Download className="w-4 h-4" />
                     Télécharger

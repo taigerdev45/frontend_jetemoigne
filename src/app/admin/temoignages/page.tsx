@@ -1,80 +1,120 @@
 "use client";
 
-import { useState } from "react";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import { useState, useEffect } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Testimony } from "@/types";
+import { TestimonyWithReviewer, TestimonyStatus } from "@/types";
+import { api } from "@/lib/api";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { Check, X, Eye, FileText, Video, Mic } from "lucide-react";
+import { Check, X, Eye, FileText, Video, Mic, Loader2, BookOpen, Calendar } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
-// Mock Data
-const MOCK_TESTIMONIES: Testimony[] = [
-  {
-    id: "1",
-    type: "video",
-    author: { name: "Sophie Martin", role: "Membre" },
-    title: "Ma guérison miraculeuse",
-    content: "https://example.com/video1.mp4",
-    thumbnail: "/images/testimony-thumb-1.jpg",
-    duration: "4:30",
-    date: "2024-03-15",
-    category: "Guérison",
-    status: "pending",
-  },
-  {
-    id: "2",
-    type: "text",
-    author: { name: "Jean Dupont", role: "Visiteur" },
-    title: "Une rencontre inattendue",
-    content: "C'était un soir d'hiver...",
-    date: "2024-03-14",
-    category: "Conversion",
-    status: "approved",
-  },
-  {
-    id: "3",
-    type: "audio",
-    author: { name: "Marie Curie", role: "Partenaire" },
-    title: "La paix retrouvée",
-    content: "https://example.com/audio1.mp3",
-    duration: "12:00",
-    date: "2024-03-13",
-    category: "Paix intérieure",
-    status: "rejected",
-  },
-];
+type FilterValue = "all" | TestimonyStatus;
 
 export default function TestimoniesPage() {
-  const [testimonies, setTestimonies] = useState<Testimony[]>(MOCK_TESTIMONIES);
-  const [filter, setFilter] = useState<"all" | "pending" | "approved" | "rejected">("all");
+  const [testimonies, setTestimonies] = useState<TestimonyWithReviewer[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [filter, setFilter] = useState<FilterValue>("all");
 
-  const filteredTestimonies = testimonies.filter(
-    (t) => filter === "all" || t.status === filter
-  );
+  // Schedule dialog state
+  const [isScheduleDialogOpen, setIsScheduleDialogOpen] = useState(false);
+  const [scheduleId, setScheduleId] = useState<string | null>(null);
+  const [scheduleDate, setScheduleDate] = useState("");
 
-  const handleStatusChange = (id: string, newStatus: "approved" | "rejected") => {
-    setTestimonies(testimonies.map((t) => 
-      t.id === id ? { ...t, status: newStatus } : t
-    ));
+  useEffect(() => {
+    fetchTestimonies();
+  }, [filter]);
+
+  const fetchTestimonies = async () => {
+    setIsLoading(true);
+    try {
+      const statusParam = filter === "all" ? undefined : filter;
+      const data = await api.admin.testimonies.findAll(statusParam);
+      setTestimonies(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Failed to fetch testimonies:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const getStatusBadge = (status?: string) => {
+  const handleMarkRead = async (id: string) => {
+    try {
+      const updated = await api.admin.testimonies.markRead(id);
+      setTestimonies(testimonies.map((t) =>
+        t.id === id ? { ...t, status: updated.status } : t
+      ));
+    } catch (error) {
+      console.error("Failed to mark as read:", error);
+      alert("Erreur lors du marquage en lecture.");
+    }
+  };
+
+  const handleValidate = async (id: string) => {
+    try {
+      const updated = await api.admin.testimonies.validate(id);
+      setTestimonies(testimonies.map((t) =>
+        t.id === id ? { ...t, status: updated.status } : t
+      ));
+    } catch (error) {
+      console.error("Failed to validate:", error);
+      alert("Erreur lors de la validation.");
+    }
+  };
+
+  const handleSchedule = async () => {
+    if (!scheduleId || !scheduleDate) return;
+    try {
+      const updated = await api.admin.testimonies.schedule(scheduleId, { scheduledFor: scheduleDate });
+      setTestimonies(testimonies.map((t) =>
+        t.id === scheduleId ? { ...t, status: updated.status, scheduledFor: updated.scheduledFor } : t
+      ));
+      setIsScheduleDialogOpen(false);
+      setScheduleId(null);
+      setScheduleDate("");
+    } catch (error) {
+      console.error("Failed to schedule:", error);
+      alert("Erreur lors de la programmation.");
+    }
+  };
+
+  const openScheduleDialog = (id: string) => {
+    setScheduleId(id);
+    setScheduleDate("");
+    setIsScheduleDialogOpen(true);
+  };
+
+  const getStatusBadge = (status?: TestimonyStatus) => {
     switch (status) {
-      case "approved":
-        return <Badge className="bg-green-500 hover:bg-green-600">Validé</Badge>;
-      case "rejected":
-        return <Badge variant="destructive">Rejeté</Badge>;
+      case "recu":
+        return <Badge variant="secondary">Recu</Badge>;
+      case "en_lecture":
+        return <Badge className="bg-blue-500 hover:bg-blue-600">En lecture</Badge>;
+      case "valide":
+        return <Badge className="bg-green-500 hover:bg-green-600">Valide</Badge>;
+      case "rejete":
+        return <Badge variant="destructive">Rejete</Badge>;
+      case "programme":
+        return <Badge className="bg-purple-500 hover:bg-purple-600">Programme</Badge>;
       default:
-        return <Badge variant="secondary">En attente</Badge>;
+        return <Badge variant="secondary">Inconnu</Badge>;
     }
   };
 
@@ -86,100 +126,150 @@ export default function TestimoniesPage() {
     }
   };
 
+  const filterButtons: { label: string; value: FilterValue; colorClass?: string }[] = [
+    { label: "Tout", value: "all" },
+    { label: "Recus", value: "recu", colorClass: "bg-slate-500 hover:bg-slate-600" },
+    { label: "En lecture", value: "en_lecture", colorClass: "bg-blue-500 hover:bg-blue-600" },
+    { label: "Valides", value: "valide", colorClass: "bg-green-500 hover:bg-green-600" },
+    { label: "Rejetes", value: "rejete", colorClass: "bg-red-500 hover:bg-red-600" },
+    { label: "Programmes", value: "programme", colorClass: "bg-purple-500 hover:bg-purple-600" },
+  ];
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight text-text-deep">Modération des Témoignages</h1>
-        <div className="flex gap-2">
-          <Button 
-            variant={filter === "all" ? "default" : "outline"} 
-            onClick={() => setFilter("all")}
-          >
-            Tout
-          </Button>
-          <Button 
-            variant={filter === "pending" ? "default" : "outline"} 
-            onClick={() => setFilter("pending")}
-            className={filter === "pending" ? "bg-orange-500 hover:bg-orange-600" : ""}
-          >
-            En attente
-          </Button>
-          <Button 
-            variant={filter === "approved" ? "default" : "outline"} 
-            onClick={() => setFilter("approved")}
-            className={filter === "approved" ? "bg-green-500 hover:bg-green-600" : ""}
-          >
-            Validés
-          </Button>
-          <Button 
-            variant={filter === "rejected" ? "default" : "outline"} 
-            onClick={() => setFilter("rejected")}
-            className={filter === "rejected" ? "bg-red-500 hover:bg-red-600" : ""}
-          >
-            Rejetés
-          </Button>
+        <h1 className="text-3xl font-bold tracking-tight text-text-deep">Moderation des Temoignages</h1>
+        <div className="flex gap-2 flex-wrap">
+          {filterButtons.map((btn) => (
+            <Button
+              key={btn.value}
+              variant={filter === btn.value ? "default" : "outline"}
+              onClick={() => setFilter(btn.value)}
+              className={filter === btn.value && btn.colorClass ? btn.colorClass : ""}
+              size="sm"
+            >
+              {btn.label}
+            </Button>
+          ))}
         </div>
       </div>
 
       <div className="rounded-md border bg-white shadow-sm">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Type</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Auteur</TableHead>
-              <TableHead>Titre</TableHead>
-              <TableHead>Catégorie</TableHead>
-              <TableHead>Statut</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredTestimonies.map((testimony) => (
-              <TableRow key={testimony.id}>
-                <TableCell>{getTypeIcon(testimony.type)}</TableCell>
-                <TableCell>{format(new Date(testimony.date), "dd MMM yyyy", { locale: fr })}</TableCell>
-                <TableCell>
-                  <div className="flex flex-col">
-                    <span className="font-medium">{testimony.author.name}</span>
-                    <span className="text-xs text-muted-foreground">{testimony.author.role}</span>
-                  </div>
-                </TableCell>
-                <TableCell className="font-medium">{testimony.title}</TableCell>
-                <TableCell>{testimony.category}</TableCell>
-                <TableCell>{getStatusBadge(testimony.status)}</TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
-                    <Button variant="ghost" size="icon" title="Voir">
-                      <Eye className="h-4 w-4 text-blue-500" />
-                    </Button>
-                    {testimony.status === "pending" && (
-                      <>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          onClick={() => handleStatusChange(testimony.id, "approved")}
-                          title="Valider"
-                        >
-                          <Check className="h-4 w-4 text-green-500" />
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          onClick={() => handleStatusChange(testimony.id, "rejected")}
-                          title="Rejeter"
-                        >
-                          <X className="h-4 w-4 text-red-500" />
-                        </Button>
-                      </>
-                    )}
-                  </div>
-                </TableCell>
+        {isLoading ? (
+          <div className="flex justify-center items-center py-20">
+            <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Type</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Auteur</TableHead>
+                <TableHead>Titre</TableHead>
+                <TableHead>Reviewer</TableHead>
+                <TableHead>Statut</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {testimonies.length === 0 ? (
+                 <TableRow>
+                   <TableCell colSpan={7} className="text-center py-10 text-slate-500">
+                     Aucun temoignage trouve.
+                   </TableCell>
+                 </TableRow>
+              ) : (
+                testimonies.map((testimony) => (
+                  <TableRow key={testimony.id}>
+                    <TableCell>{getTypeIcon(testimony.mediaType)}</TableCell>
+                    <TableCell>
+                      {testimony.createdAt ? format(new Date(testimony.createdAt), "dd MMM yyyy", { locale: fr }) : "-"}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-col">
+                        <span className="font-medium">{testimony.authorName || "Anonyme"}</span>
+                        <span className="text-xs text-muted-foreground">{testimony.authorEmail}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="font-medium">{testimony.title || "-"}</TableCell>
+                    <TableCell>
+                      <span className="text-sm text-slate-500">
+                        {testimony.reviewer?.fullName || "-"}
+                      </span>
+                    </TableCell>
+                    <TableCell>{getStatusBadge(testimony.status)}</TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-1">
+                        {testimony.mediaUrl && (
+                          <Button variant="ghost" size="icon" title="Voir le media" onClick={() => window.open(testimony.mediaUrl!, "_blank")}>
+                            <Eye className="h-4 w-4 text-blue-500" />
+                          </Button>
+                        )}
+                        {testimony.status === "recu" && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleMarkRead(testimony.id)}
+                            title="Marquer en lecture"
+                          >
+                            <BookOpen className="h-4 w-4 text-blue-500" />
+                          </Button>
+                        )}
+                        {(testimony.status === "recu" || testimony.status === "en_lecture") && (
+                          <>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleValidate(testimony.id)}
+                              title="Valider"
+                            >
+                              <Check className="h-4 w-4 text-green-500" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => openScheduleDialog(testimony.id)}
+                              title="Programmer"
+                            >
+                              <Calendar className="h-4 w-4 text-purple-500" />
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        )}
       </div>
+
+      {/* Schedule Dialog */}
+      <Dialog open={isScheduleDialogOpen} onOpenChange={setIsScheduleDialogOpen}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle>Programmer le temoignage</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label className="text-right">Date</Label>
+              <Input
+                type="datetime-local"
+                value={scheduleDate}
+                onChange={(e) => setScheduleDate(e.target.value)}
+                className="col-span-3"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button onClick={handleSchedule} disabled={!scheduleDate}>
+              Confirmer la programmation
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

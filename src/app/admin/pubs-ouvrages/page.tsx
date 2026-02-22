@@ -1,103 +1,204 @@
 "use client";
 
-import { useState } from "react";
-import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
+import { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger
 } from "@/components/ui/tabs";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
 } from "@/components/ui/table";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogHeader, 
-  DialogTitle, 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
 import { format } from "date-fns";
-import { Plus, Trash2, Upload, Eye, Image as ImageIcon, Book, LinkIcon, Edit } from "lucide-react";
-import { Advertisement, Book as BookType } from "@/types";
-
-// Mock Data
-const MOCK_ADS: Advertisement[] = [
-  { id: "1", title: "Campagne Hiver", type: "image", mediaUrl: "/ads/winter.jpg", redirectUrl: "https://partner.com", startDate: "2024-11-01", endDate: "2024-12-31", status: "ended", views: 1500, clicks: 120 },
-  { id: "2", title: "Promo Conférence", type: "video", mediaUrl: "/ads/conf.mp4", redirectUrl: "https://conf.org", startDate: "2024-03-01", endDate: "2024-04-01", status: "active", views: 500, clicks: 45 },
-];
-
-const MOCK_BOOKS: BookType[] = [
-  { id: "1", title: "La Foi Triomphante", author: "Pasteur Jean", price: 0, coverUrl: "/books/foi.jpg", pdfUrl: "/books/foi.pdf", publishedDate: "2023-05-15", status: "published" },
-  { id: "2", title: "Principes de Vie", author: "Dr. Martin", price: 15.99, coverUrl: "/books/principles.jpg", pdfUrl: "/books/principles.pdf", publishedDate: "2024-01-20", status: "published" },
-];
+import { Plus, Trash2, Eye, Image as ImageIcon, Book, LinkIcon, Loader2 } from "lucide-react";
+import { Ad, Book as BookType } from "@/types";
+import { api } from "@/lib/api";
 
 export default function PubsOuvragesPage() {
   const [activeTab, setActiveTab] = useState("pubs");
-  
+  const [isLoading, setIsLoading] = useState(false);
+
   // State for Ads
-  const [ads, setAds] = useState<Advertisement[]>(MOCK_ADS);
+  const [ads, setAds] = useState<Ad[]>([]);
   const [isAdDialogOpen, setIsAdDialogOpen] = useState(false);
-  const [newAd, setNewAd] = useState<Partial<Advertisement>>({ type: "image", status: "scheduled" });
+  const [newAdClientName, setNewAdClientName] = useState("");
+  const [newAdRedirectUrl, setNewAdRedirectUrl] = useState("");
+  const [newAdStartDate, setNewAdStartDate] = useState("");
+  const [newAdEndDate, setNewAdEndDate] = useState("");
+  const [adFile, setAdFile] = useState<File | null>(null);
 
   // State for Books
-  const [books, setBooks] = useState<BookType[]>(MOCK_BOOKS);
+  const [books, setBooks] = useState<BookType[]>([]);
   const [isBookDialogOpen, setIsBookDialogOpen] = useState(false);
-  const [newBook, setNewBook] = useState<Partial<BookType>>({ price: 0, status: "draft" });
+  const [newBookTitle, setNewBookTitle] = useState("");
+  const [newBookAuthor, setNewBookAuthor] = useState("");
+  const [newBookPrice, setNewBookPrice] = useState("0");
+  const [newBookDescription, setNewBookDescription] = useState("");
+  const [bookCoverFile, setBookCoverFile] = useState<File | null>(null);
+  const [bookPdfFile, setBookPdfFile] = useState<File | null>(null);
 
-  const handleSaveAd = () => {
-    if (!newAd.title || !newAd.startDate || !newAd.endDate) return;
-    const ad: Advertisement = {
-        id: Math.random().toString(36).substr(2, 9),
-        title: newAd.title,
-        type: newAd.type || "image",
-        mediaUrl: newAd.mediaUrl || "https://placehold.co/600x400",
-        redirectUrl: newAd.redirectUrl || "#",
-        startDate: newAd.startDate,
-        endDate: newAd.endDate,
-        status: "active",
-        views: 0,
-        clicks: 0
-    };
-    setAds([...ads, ad]);
-    setIsAdDialogOpen(false);
-    setNewAd({ type: "image", status: "scheduled" });
+  const fetchAds = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const data = await api.ads.findActive();
+      setAds(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Failed to fetch ads:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const fetchBooks = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const data = await api.admin.content.getBooks();
+      setBooks(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Failed to fetch books:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (activeTab === "pubs") {
+      fetchAds();
+    } else {
+      fetchBooks();
+    }
+  }, [activeTab, fetchAds, fetchBooks]);
+
+  const handleSaveAd = async () => {
+    if (!newAdClientName) {
+      alert("Le nom du client est requis");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("clientName", newAdClientName);
+      if (newAdRedirectUrl) formData.append("redirectUrl", newAdRedirectUrl);
+      if (newAdStartDate) formData.append("startDate", newAdStartDate);
+      if (newAdEndDate) formData.append("endDate", newAdEndDate);
+
+      if (adFile) {
+        formData.append("media", adFile);
+      }
+
+      await api.admin.content.createAd(formData);
+
+      await fetchAds();
+      setIsAdDialogOpen(false);
+      resetAdForm();
+    } catch (error) {
+      console.error("Failed to save ad:", error);
+      alert("Erreur lors de l'enregistrement de la campagne");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleSaveBook = () => {
-    if (!newBook.title || !newBook.author) return;
-    const book: BookType = {
-        id: Math.random().toString(36).substr(2, 9),
-        title: newBook.title,
-        author: newBook.author,
-        price: Number(newBook.price) || 0,
-        coverUrl: newBook.coverUrl || "https://placehold.co/200x300",
-        pdfUrl: newBook.pdfUrl || "#",
-        publishedDate: new Date().toISOString(),
-        status: "published"
-    };
-    setBooks([...books, book]);
-    setIsBookDialogOpen(false);
-    setNewBook({ price: 0, status: "draft" });
+  const resetAdForm = () => {
+    setNewAdClientName("");
+    setNewAdRedirectUrl("");
+    setNewAdStartDate("");
+    setNewAdEndDate("");
+    setAdFile(null);
   };
+
+  const handleDeleteAd = async (id: string) => {
+    if (!confirm("Etes-vous sur de vouloir supprimer cette campagne ?")) return;
+    try {
+      await api.admin.content.deleteAd(id);
+      setAds(ads.filter(a => a.id !== id));
+    } catch (error) {
+      console.error("Failed to delete ad:", error);
+      alert("Erreur lors de la suppression");
+    }
+  };
+
+  const handleSaveBook = async () => {
+    if (!newBookTitle || !newBookAuthor) {
+      alert("Titre et auteur sont requis");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("title", newBookTitle);
+      formData.append("author", newBookAuthor);
+      formData.append("price", newBookPrice);
+      if (newBookDescription) formData.append("description", newBookDescription);
+
+      if (bookCoverFile) {
+        formData.append("cover", bookCoverFile);
+      }
+      if (bookPdfFile) {
+        formData.append("pdf", bookPdfFile);
+      }
+
+      await api.admin.content.createBook(formData);
+
+      await fetchBooks();
+      setIsBookDialogOpen(false);
+      resetBookForm();
+    } catch (error) {
+      console.error("Failed to save book:", error);
+      alert("Erreur lors de l'enregistrement du livre");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const resetBookForm = () => {
+    setNewBookTitle("");
+    setNewBookAuthor("");
+    setNewBookPrice("0");
+    setNewBookDescription("");
+    setBookCoverFile(null);
+    setBookPdfFile(null);
+  };
+
+  const handleDeleteBook = async (id: string) => {
+    if (!confirm("Etes-vous sur de vouloir supprimer ce livre ?")) return;
+    try {
+      await api.admin.content.deleteBook(id);
+      setBooks(books.filter(b => b.id !== id));
+    } catch (error) {
+      console.error("Failed to delete book:", error);
+      alert("Erreur lors de la suppression");
+    }
+  };
+
+  const formatPrice = (price: string | null, isFree: boolean) => {
+    if (isFree) return "Gratuit";
+    if (!price || parseFloat(price) === 0) return "Gratuit";
+    return `${parseFloat(price).toLocaleString("fr-FR")} XAF`;
+  };
+
 
   return (
     <div className="space-y-6">
@@ -107,7 +208,7 @@ export default function PubsOuvragesPage() {
 
       <Tabs defaultValue="pubs" value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-2 max-w-[400px]">
-          <TabsTrigger value="pubs">Publicités</TabsTrigger>
+          <TabsTrigger value="pubs">Publicites</TabsTrigger>
           <TabsTrigger value="books">Ouvrages (Livres)</TabsTrigger>
         </TabsList>
 
@@ -120,45 +221,42 @@ export default function PubsOuvragesPage() {
                 </DialogTrigger>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Créer une campagne publicitaire</DialogTitle>
-                        <DialogDescription>Configurez la bannière, le lien et la durée.</DialogDescription>
+                        <DialogTitle>Creer une campagne publicitaire</DialogTitle>
+                        <DialogDescription>Configurez la banniere, le lien et la duree.</DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
                         <div className="grid grid-cols-4 items-center gap-4">
-                            <Label className="text-right">Titre</Label>
-                            <Input className="col-span-3" value={newAd.title || ""} onChange={e => setNewAd({...newAd, title: e.target.value})} />
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label className="text-right">Type</Label>
-                            <Select value={newAd.type} onValueChange={(val: "image"|"video") => setNewAd({...newAd, type: val})}>
-                                <SelectTrigger className="col-span-3"><SelectValue /></SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="image">Image</SelectItem>
-                                    <SelectItem value="video">Vidéo</SelectItem>
-                                </SelectContent>
-                            </Select>
+                            <Label className="text-right">Client</Label>
+                            <Input className="col-span-3" value={newAdClientName} onChange={e => setNewAdClientName(e.target.value)} placeholder="Nom du client" />
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label className="text-right">Redirection</Label>
-                            <Input className="col-span-3" placeholder="https://..." value={newAd.redirectUrl || ""} onChange={e => setNewAd({...newAd, redirectUrl: e.target.value})} />
+                            <Input className="col-span-3" placeholder="https://..." value={newAdRedirectUrl} onChange={e => setNewAdRedirectUrl(e.target.value)} />
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
-                            <Label className="text-right">Début</Label>
-                            <Input type="date" className="col-span-3" value={newAd.startDate || ""} onChange={e => setNewAd({...newAd, startDate: e.target.value})} />
+                            <Label className="text-right">Debut</Label>
+                            <Input type="date" className="col-span-3" value={newAdStartDate} onChange={e => setNewAdStartDate(e.target.value)} />
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label className="text-right">Fin</Label>
-                            <Input type="date" className="col-span-3" value={newAd.endDate || ""} onChange={e => setNewAd({...newAd, endDate: e.target.value})} />
+                            <Input type="date" className="col-span-3" value={newAdEndDate} onChange={e => setNewAdEndDate(e.target.value)} />
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
-                            <Label className="text-right">Média</Label>
-                            <div className="col-span-3 flex items-center gap-2">
-                                <Button variant="secondary" size="sm" className="w-full"><Upload className="mr-2 h-4 w-4" /> Uploader {newAd.type}</Button>
+                            <Label className="text-right">Media</Label>
+                            <div className="col-span-3">
+                                <Input
+                                    type="file"
+                                    accept="image/*,video/*"
+                                    onChange={(e) => setAdFile(e.target.files?.[0] || null)}
+                                />
                             </div>
                         </div>
                     </div>
                     <DialogFooter>
-                        <Button onClick={handleSaveAd}>Lancer la campagne</Button>
+                        <Button onClick={handleSaveAd} disabled={isLoading}>
+                            {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                            Lancer la campagne
+                        </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
@@ -168,33 +266,48 @@ export default function PubsOuvragesPage() {
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Campagne</TableHead>
+                        <TableHead>Client</TableHead>
                         <TableHead>Type</TableHead>
-                        <TableHead>Période</TableHead>
+                        <TableHead>Periode</TableHead>
                         <TableHead>Stats</TableHead>
                         <TableHead>Statut</TableHead>
                         <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {ads.map(ad => (
-                        <TableRow key={ad.id}>
-                            <TableCell className="font-medium">{ad.title}</TableCell>
-                            <TableCell>{ad.type === "image" ? <ImageIcon className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</TableCell>
-                            <TableCell className="text-sm">
-                                {format(new Date(ad.startDate), "dd/MM")} - {format(new Date(ad.endDate), "dd/MM/yyyy")}
-                            </TableCell>
-                            <TableCell className="text-sm text-slate-500">
-                                {ad.views} vues / {ad.clicks} clics
-                            </TableCell>
-                            <TableCell>
-                                <Badge variant={ad.status === "active" ? "default" : "secondary"}>{ad.status}</Badge>
-                            </TableCell>
-                            <TableCell className="text-right">
-                                <Button variant="ghost" size="icon"><Trash2 className="h-4 w-4 text-red-500" /></Button>
+                    {ads.length === 0 ? (
+                        <TableRow>
+                            <TableCell colSpan={6} className="text-center py-4 text-slate-500">
+                                {isLoading ? "Chargement..." : "Aucune campagne trouvee"}
                             </TableCell>
                         </TableRow>
-                    ))}
+                    ) : (
+                        ads.map(ad => (
+                        <TableRow key={ad.id}>
+                            <TableCell className="font-medium">{ad.clientName}</TableCell>
+                            <TableCell>{ad.mediaType === "image" ? <ImageIcon className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</TableCell>
+                            <TableCell className="text-sm">
+                                {ad.startDate ? format(new Date(ad.startDate), "dd/MM") : "-"} - {ad.endDate ? format(new Date(ad.endDate), "dd/MM/yyyy") : "-"}
+                            </TableCell>
+                            <TableCell className="text-sm text-slate-500">
+                                {ad.viewsCount || 0} vues / {ad.clicksCount || 0} clics
+                            </TableCell>
+                            <TableCell>
+                                <Badge variant={ad.isActive ? "default" : "secondary"}>
+                                  {ad.isActive ? "Active" : "Inactive"}
+                                </Badge>
+                            </TableCell>
+                            <TableCell className="text-right">
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handleDeleteAd(ad.id)}
+                                >
+                                    <Trash2 className="h-4 w-4 text-red-500" />
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+                    )))}
                 </TableBody>
             </Table>
            </div>
@@ -210,37 +323,46 @@ export default function PubsOuvragesPage() {
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>Ajouter un Livre</DialogTitle>
-                        <DialogDescription>Uploadez le PDF et définissez le prix.</DialogDescription>
+                        <DialogDescription>Uploadez le PDF et definissez le prix.</DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label className="text-right">Titre</Label>
-                            <Input className="col-span-3" value={newBook.title || ""} onChange={e => setNewBook({...newBook, title: e.target.value})} />
+                            <Input className="col-span-3" value={newBookTitle} onChange={e => setNewBookTitle(e.target.value)} />
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label className="text-right">Auteur</Label>
-                            <Input className="col-span-3" value={newBook.author || ""} onChange={e => setNewBook({...newBook, author: e.target.value})} />
+                            <Input className="col-span-3" value={newBookAuthor} onChange={e => setNewBookAuthor(e.target.value)} />
                         </div>
                          <div className="grid grid-cols-4 items-center gap-4">
-                            <Label className="text-right">Prix (€)</Label>
-                            <Input 
-                                type="number" 
-                                className="col-span-3" 
+                            <Label className="text-right">Prix (XAF)</Label>
+                            <Input
+                                type="number"
+                                className="col-span-3"
                                 placeholder="0 pour Gratuit"
-                                value={newBook.price} 
-                                onChange={e => setNewBook({...newBook, price: Number(e.target.value)})} 
+                                value={newBookPrice}
+                                onChange={e => setNewBookPrice(e.target.value)}
                             />
                         </div>
                          <div className="grid grid-cols-4 items-center gap-4">
                             <Label className="text-right">Fichiers</Label>
                             <div className="col-span-3 space-y-2">
-                                <Button variant="outline" size="sm" className="w-full justify-start"><Upload className="mr-2 h-4 w-4" /> Couverture (JPG/PNG)</Button>
-                                <Button variant="outline" size="sm" className="w-full justify-start"><Upload className="mr-2 h-4 w-4" /> Livre (PDF)</Button>
+                                <div className="grid w-full max-w-sm items-center gap-1.5">
+                                    <Label htmlFor="cover">Couverture</Label>
+                                    <Input id="cover" type="file" accept="image/*" onChange={(e) => setBookCoverFile(e.target.files?.[0] || null)} />
+                                </div>
+                                <div className="grid w-full max-w-sm items-center gap-1.5">
+                                    <Label htmlFor="pdf">PDF du livre</Label>
+                                    <Input id="pdf" type="file" accept=".pdf" onChange={(e) => setBookPdfFile(e.target.files?.[0] || null)} />
+                                </div>
                             </div>
                         </div>
                     </div>
                     <DialogFooter>
-                        <Button onClick={handleSaveBook}>Publier</Button>
+                        <Button onClick={handleSaveBook} disabled={isLoading}>
+                            {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                            Publier
+                        </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
@@ -253,36 +375,62 @@ export default function PubsOuvragesPage() {
                         <TableHead>Titre</TableHead>
                         <TableHead>Auteur</TableHead>
                         <TableHead>Prix</TableHead>
+                        <TableHead>Telechargements</TableHead>
                         <TableHead>Fichier</TableHead>
                         <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {books.map(book => (
+                    {books.length === 0 ? (
+                        <TableRow>
+                            <TableCell colSpan={6} className="text-center py-4 text-slate-500">
+                                {isLoading ? "Chargement..." : "Aucun livre trouve"}
+                            </TableCell>
+                        </TableRow>
+                    ) : (
+                        books.map(book => (
                         <TableRow key={book.id}>
                             <TableCell className="font-medium flex items-center gap-3">
-                                <div className="h-10 w-8 bg-slate-200 rounded overflow-hidden">
-                                    {/* Mock cover */}
-                                    <div className="w-full h-full bg-blue-900/20 flex items-center justify-center">
-                                        <Book className="h-4 w-4 text-blue-900" />
-                                    </div>
+                                <div className="h-10 w-8 bg-slate-200 rounded overflow-hidden relative">
+                                    {book.coverUrl ? (
+                                        <Image src={book.coverUrl} alt={book.title} className="w-full h-full object-cover" fill sizes="32px" />
+                                    ) : (
+                                        <div className="w-full h-full bg-blue-900/20 flex items-center justify-center">
+                                            <Book className="h-4 w-4 text-blue-900" />
+                                        </div>
+                                    )}
                                 </div>
                                 {book.title}
                             </TableCell>
-                            <TableCell>{book.author}</TableCell>
+                            <TableCell>{book.author || "-"}</TableCell>
                             <TableCell>
-                                {book.price === 0 ? <Badge className="bg-green-500">Gratuit</Badge> : `${book.price} €`}
+                                {book.isFree || !book.price || parseFloat(book.price) === 0 ? (
+                                  <Badge className="bg-green-500">Gratuit</Badge>
+                                ) : (
+                                  formatPrice(book.price, book.isFree)
+                                )}
                             </TableCell>
                             <TableCell>
-                                <Button variant="link" className="h-auto p-0 text-blue-600">
-                                    <LinkIcon className="mr-1 h-3 w-3" /> PDF
+                              <span className="text-sm text-slate-500">{book.downloadsCount || 0}</span>
+                            </TableCell>
+                            <TableCell>
+                                <Button variant="link" className="h-auto p-0 text-blue-600" asChild>
+                                    <a href={book.pdfUrl} target="_blank" rel="noopener noreferrer">
+                                        <LinkIcon className="mr-1 h-3 w-3" /> PDF
+                                    </a>
                                 </Button>
                             </TableCell>
                             <TableCell className="text-right">
-                                <Button variant="ghost" size="icon"><Edit className="h-4 w-4" /></Button>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handleDeleteBook(book.id)}
+                                >
+                                    <Trash2 className="h-4 w-4 text-red-500" />
+                                </Button>
                             </TableCell>
                         </TableRow>
-                    ))}
+                    )))}
                 </TableBody>
             </Table>
            </div>

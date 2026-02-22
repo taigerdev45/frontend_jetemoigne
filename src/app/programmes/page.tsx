@@ -1,36 +1,52 @@
 "use client";
 
-import React, { useState } from "react";
-import Image from "next/image";
+import React, { useState, useEffect } from "react";
 import { CategoryFilters } from "@/components/ui/CategoryFilters";
 import { ProgramCard } from "@/components/programs/ProgramCard";
 import { Modal } from "@/components/ui/modal";
-import { MarqueeItem } from "@/components/home/CategoryMarquee";
-
-const PROGRAMS: MarqueeItem[] = [
-  { id: "p1", title: "Étude sur l'Apocalypse", subtitle: "Enseignement", image: "https://images.unsplash.com/photo-1507692049790-de58293a4697?q=80&w=2070&auto=format&fit=crop" },
-  { id: "p2", title: "Les Héros de la Foi : David", subtitle: "Documentaire", image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=2070&auto=format&fit=crop" },
-  { id: "p3", title: "Chants de Victoire Vol. 2", subtitle: "Louange", image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=2070&auto=format&fit=crop" },
-  { id: "p4", title: "Débat : Science et Foi", subtitle: "Talk Show", image: "https://images.unsplash.com/photo-1544531586-fde5298cdd40?q=80&w=2070&auto=format&fit=crop" },
-  { id: "p5", title: "Dessins Animés Bibliques", subtitle: "Jeunesse", image: "https://images.unsplash.com/photo-1606092195730-5d7b9af1ef4d?q=80&w=2070&auto=format&fit=crop" },
-  { id: "p6", title: "La puissance de la Prière", subtitle: "Enseignement", image: "https://images.unsplash.com/photo-1438232992991-995b7058bbb3?q=80&w=2073&auto=format&fit=crop" },
-];
+import { Program } from "@/types";
+import { api } from "@/lib/api";
+import { Loader2 } from "lucide-react";
 
 const PROGRAM_FILTERS = [
   { value: "all", label: "Tous" },
-  { value: "Enseignement", label: "Enseignements" },
-  { value: "Documentaire", label: "Documentaires" },
-  { value: "Louange", label: "Louange & Adoration" },
-  { value: "Jeunesse", label: "Jeunesse" },
+  { value: "evangelisation", label: "Evangélisation" },
+  { value: "jeunesse_cinema", label: "Jeunesse & Cinéma" },
+  { value: "divertissement", label: "Divertissement" },
+  { value: "podcast", label: "Podcast" },
+  { value: "concert", label: "Concert / Louange" },
+  { value: "temoignage_live", label: "Témoignage Live" },
+  { value: "info", label: "Info" },
 ];
 
 export default function ProgrammesPage() {
-  const [selectedProgram, setSelectedProgram] = useState<MarqueeItem | null>(null);
+  const [programs, setPrograms] = useState<Program[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedProgram, setSelectedProgram] = useState<Program | null>(null);
   const [activeFilter, setActiveFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredPrograms = activeFilter === "all" 
-    ? PROGRAMS 
-    : PROGRAMS.filter(p => p.subtitle === activeFilter);
+  useEffect(() => {
+    const fetchPrograms = async () => {
+      try {
+        const data = await api.programs.findAll();
+        // Access .items from PaginatedResponse
+        setPrograms(data.items || []);
+      } catch (error) {
+        console.error("Failed to fetch programs:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPrograms();
+  }, []);
+
+  const filteredPrograms = programs.filter(p => {
+     const matchesFilter = activeFilter === "all" || p.category === activeFilter;
+     const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase());
+     return matchesFilter && matchesSearch;
+  });
 
   return (
     <div className="min-h-screen pt-24 pb-10 px-6 max-w-7xl mx-auto flex flex-col gap-10">
@@ -44,12 +60,14 @@ export default function ProgrammesPage() {
            </p>
         </div>
         
-        {/* Search Bar Placeholder */}
+        {/* Search Bar */}
         <div className="w-full md:w-auto relative">
            <input 
              type="text" 
              placeholder="Rechercher..." 
              className="w-full md:w-64 px-4 py-2 pl-10 rounded-full border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-slate-50"
+             value={searchQuery}
+             onChange={(e) => setSearchQuery(e.target.value)}
            />
            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 absolute left-3 top-2.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -68,15 +86,28 @@ export default function ProgrammesPage() {
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {filteredPrograms.map((program) => (
-          <ProgramCard 
-            key={program.id} 
-            item={program} 
-            onClick={() => setSelectedProgram(program)}
-          />
-        ))}
-      </div>
+      {isLoading ? (
+        <div className="flex justify-center items-center py-20">
+          <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {filteredPrograms.map((program) => (
+            <ProgramCard 
+              key={program.id} 
+              program={program} 
+              onClick={() => setSelectedProgram(program)}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Empty State */}
+      {!isLoading && filteredPrograms.length === 0 && (
+         <div className="text-center py-20">
+            <p className="text-slate-500 text-lg">Aucun programme ne correspond à votre recherche.</p>
+         </div>
+      )}
 
       {/* Modal Details */}
       <Modal 
@@ -87,22 +118,30 @@ export default function ProgrammesPage() {
       >
         {selectedProgram && (
            <div className="flex flex-col gap-6">
-              <div className="aspect-video bg-black rounded-xl overflow-hidden relative shadow-lg">
-                 <iframe 
-                   width="100%" 
-                   height="100%" 
-                   src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1" 
-                   title="YouTube video player" 
-                   frameBorder="0" 
-                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                   allowFullScreen
-                 />
-              </div>
+              {(selectedProgram.videoUrl || selectedProgram.audioUrl) && (
+                <div className="aspect-video bg-black rounded-xl overflow-hidden relative shadow-lg">
+                   {selectedProgram.videoUrl ? (
+                     <iframe
+                       width="100%"
+                       height="100%"
+                       src={selectedProgram.videoUrl.replace("watch?v=", "embed/")}
+                       title={selectedProgram.title}
+                       frameBorder="0"
+                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                       allowFullScreen
+                     />
+                   ) : selectedProgram.audioUrl ? (
+                     <div className="flex items-center justify-center h-full bg-slate-900">
+                       <audio controls src={selectedProgram.audioUrl} className="w-3/4" />
+                     </div>
+                   ) : null}
+                </div>
+              )}
               
               <div className="flex flex-col gap-4">
                  <div className="flex items-center justify-between flex-wrap gap-4">
                     <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold uppercase tracking-wider">
-                       {selectedProgram.subtitle}
+                       {selectedProgram.category?.replace('_', ' ')}
                     </span>
                     <div className="flex gap-2">
                        <button className="px-4 py-2 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors font-medium text-sm text-slate-700">
@@ -116,25 +155,19 @@ export default function ProgrammesPage() {
                  
                  <div className="prose prose-blue max-w-none text-slate-600">
                     <p>
-                       Découvrez cet enseignement puissant qui a transformé la vie de milliers de personnes. 
-                       Un message d&apos;espoir et de foi pour votre quotidien.
+                       {selectedProgram.description || "Aucune description disponible."}
                     </p>
                  </div>
                  
                  <div className="border-t border-slate-100 pt-4 mt-2">
                     <div className="flex items-center gap-4">
-                       <div className="w-12 h-12 rounded-full bg-slate-200 overflow-hidden relative">
-                          <Image 
-                            src="https://i.pravatar.cc/150?u=a042581f4e29026024d" 
-                            alt="Speaker" 
-                            fill
-                            className="object-cover"
-                            unoptimized
-                          />
+                       <div className="w-12 h-12 rounded-full bg-slate-200 overflow-hidden relative flex items-center justify-center">
+                          {/* Placeholder for author avatar since Program doesn't have author field yet */}
+                          <span className="text-xl font-bold text-slate-500">J</span>
                        </div>
                        <div>
-                          <p className="font-bold text-slate-900">Pasteur Jean Dupont</p>
-                          <p className="text-xs text-slate-500 uppercase tracking-wide">Orateur Principal</p>
+                          <p className="font-bold text-slate-900">Jetemoigne TV</p>
+                          <p className="text-xs text-slate-500 uppercase tracking-wide">Chaine Officielle</p>
                        </div>
                     </div>
                  </div>

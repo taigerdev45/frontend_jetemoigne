@@ -2,18 +2,23 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
+import type { Project } from "@/types";
 
 interface ProjectsTileProps {
   className?: string;
   projectName?: string;
   progress?: number;
+  project?: Project | null;
 }
 
 export function ProjectsTile({
   className,
   projectName = "Construction Studio",
   progress = 65,
+  project,
 }: ProjectsTileProps) {
+  const displayName = project?.title || projectName;
+  const displayProgress = project?.progressPercent ?? progress;
   return (
     <div
       className={cn(
@@ -22,12 +27,12 @@ export function ProjectsTile({
       )}
     >
       <div>
-        <h3 className="font-bold text-text-deep mb-4">{projectName}</h3>
+        <h3 className="font-bold text-text-deep mb-4">{displayName}</h3>
         <div className="mb-2">
-          <Progress value={progress} className="h-2 bg-muted" />
+          <Progress value={displayProgress} className="h-2 bg-muted" />
         </div>
         <span className="text-xs text-text-deep/60 font-medium">
-          {progress}% de l&apos;objectif atteint
+          {displayProgress}% de l&apos;objectif atteint
         </span>
       </div>
       <Button

@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { Progress } from "@/components/ui/progress";
-import { Users, Handshake, TrendingUp } from "lucide-react";
+import { Users, Handshake, TrendingUp, MessageSquare } from "lucide-react";
+import type { PublicHubStats } from "@/types";
 
 const Counter = ({ end, label, icon: Icon, suffix = "" }: { end: number; label: string; icon: React.ElementType; suffix?: string }) => {
   const [count, setCount] = useState(0);
@@ -11,7 +12,7 @@ const Counter = ({ end, label, icon: Icon, suffix = "" }: { end: number; label: 
     let start = 0;
     const duration = 2000;
     const increment = end / (duration / 16);
-    
+
     const timer = setInterval(() => {
       start += increment;
       if (start >= end) {
@@ -42,7 +43,11 @@ const Counter = ({ end, label, icon: Icon, suffix = "" }: { end: number; label: 
   );
 };
 
-export function TransparencyDashboard() {
+interface TransparencyDashboardProps {
+  stats?: PublicHubStats | null;
+}
+
+export function TransparencyDashboard({ stats }: TransparencyDashboardProps) {
   const [progress, setProgress] = useState(0);
   const targetAmount = 50000;
   const currentAmount = 32500;
@@ -53,20 +58,28 @@ export function TransparencyDashboard() {
     return () => clearTimeout(timer);
   }, [percentage]);
 
+  const donorsCount = stats?.donorsCount ?? 0;
+  const volunteersCount = stats?.volunteersCount ?? 1250;
+  const testimoniesCount = stats?.testimoniesCount ?? 45;
+
   return (
     <section className="py-12 bg-slate-50 dark:bg-slate-950/50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-10">
           <h2 className="text-3xl font-bold mb-4">Notre Impact en Chiffres</h2>
           <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-            La transparence est au cœur de notre mission. Voici un aperçu de notre communauté et de nos ressources.
+            La transparence est au coeur de notre mission. Voici un apercu de notre communaute et de nos ressources.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-          <Counter end={1250} label="Bénévoles Actifs" icon={Users} />
-          <Counter end={45} label="Partenaires Engagés" icon={Handshake} />
-          <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-800 col-span-1 md:col-span-1 flex flex-col justify-center">
+          <Counter end={volunteersCount} label="Benevoles Actifs" icon={Users} />
+          <Counter end={donorsCount} label="Donateurs" icon={Handshake} />
+          <Counter end={testimoniesCount} label="Temoignages" icon={MessageSquare} />
+        </div>
+
+        <div className="max-w-xl mx-auto">
+          <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-800 flex flex-col justify-center">
              <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center space-x-2">
                     <TrendingUp className="w-5 h-5 text-green-500" />
@@ -76,8 +89,8 @@ export function TransparencyDashboard() {
              </div>
              <Progress value={progress} className="h-3 mb-2" />
              <div className="flex justify-between text-xs text-slate-500">
-                <span>{currentAmount.toLocaleString()}€ collectés</span>
-                <span>Obj. {targetAmount.toLocaleString()}€</span>
+                <span>{currentAmount.toLocaleString()} FCFA collectes</span>
+                <span>Obj. {targetAmount.toLocaleString()} FCFA</span>
              </div>
           </div>
         </div>

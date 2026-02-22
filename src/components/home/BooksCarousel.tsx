@@ -8,46 +8,68 @@ import {
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { BookOpen, ShoppingBag } from "lucide-react";
+import type { Book } from "@/types";
 
-const books = [
+const FALLBACK_COLORS = [
+  "bg-blue-100",
+  "bg-purple-100",
+  "bg-rose-100",
+  "bg-amber-100",
+  "bg-emerald-100",
+];
+
+const defaultBooks = [
   {
-    id: 1,
-    title: "La Puissance du Témoignage",
+    id: "1",
+    title: "La Puissance du Temoignage",
     author: "MOUSSAVOU",
     price: "15000 FCFA",
     color: "bg-blue-100",
   },
   {
-    id: 2,
+    id: "2",
     title: "Vaincre par la Foi",
     author: "Sarah ",
     price: "12000 FCFA",
     color: "bg-purple-100",
   },
   {
-    id: 3,
+    id: "3",
     title: "L'Amour qui Sauve",
     author: "Pierre Durand",
     price: "18000 FCFA",
     color: "bg-rose-100",
   },
   {
-    id: 4,
-    title: "Prière et Miracles",
+    id: "4",
+    title: "Priere et Miracles",
     author: "Wahid",
     price: "20000 FCFA",
     color: "bg-amber-100",
   },
   {
-    id: 5,
-    title: "Chemins de Lumière",
+    id: "5",
+    title: "Chemins de Lumiere",
     author: "Luce",
     price: "14000 FCFA",
     color: "bg-emerald-100",
   },
 ];
 
-export function BooksCarousel() {
+interface BooksCarouselProps {
+  books?: Book[];
+}
+
+export function BooksCarousel({ books: apiBooks }: BooksCarouselProps) {
+  const books = apiBooks && apiBooks.length > 0
+    ? apiBooks.map((book, index) => ({
+        id: book.id,
+        title: book.title,
+        author: book.author || "Auteur inconnu",
+        price: book.isFree ? "Gratuit" : (book.price ? `${book.price} FCFA` : "Gratuit"),
+        color: FALLBACK_COLORS[index % FALLBACK_COLORS.length],
+      }))
+    : defaultBooks;
   return (
     <div className="w-full py-10">
       <div className="flex items-center justify-between mb-8 px-2">

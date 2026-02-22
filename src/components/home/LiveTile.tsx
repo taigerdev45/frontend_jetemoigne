@@ -1,12 +1,14 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import type { Program } from "@/types";
 
 interface LiveTileProps {
   className?: string;
+  program?: Program | null;
 }
 
-export function LiveTile({ className }: LiveTileProps) {
+export function LiveTile({ className, program }: LiveTileProps) {
   return (
     <div
       className={cn(
@@ -26,11 +28,10 @@ export function LiveTile({ className }: LiveTileProps) {
           </span>
         </div>
         <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-          Le Direct de la Foi : Évangélisation 2026
+          {program?.title || "Le Direct de la Foi : Evangelisation 2026"}
         </h2>
         <p className="text-white/60 mb-6 max-w-md">
-          Rejoignez-nous maintenant pour un moment intense de prière et de
-          témoignages en direct.
+          {program?.description || "Rejoignez-nous maintenant pour un moment intense de priere et de temoignages en direct."}
         </p>
         <Button className="w-fit bg-primary hover:bg-secondary text-white rounded-2xl px-8 py-6 text-lg shadow-lg shadow-primary/20 transition-all">
           Regarder Maintenant

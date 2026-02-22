@@ -16,13 +16,17 @@ export const TestimonyCard = ({ testimony, onClick }: TestimonyCardProps) => {
     video: Play,
     audio: Mic,
     text: FileText,
-  }[testimony.type];
+    ecrit: FileText,
+    image: FileText
+  }[testimony.mediaType] || FileText;
 
   const colorClass = {
     video: "text-red-500 bg-red-50 border-red-100",
     audio: "text-blue-500 bg-blue-50 border-blue-100",
     text: "text-emerald-500 bg-emerald-50 border-emerald-100",
-  }[testimony.type];
+    ecrit: "text-emerald-500 bg-emerald-50 border-emerald-100",
+    image: "text-purple-500 bg-purple-50 border-purple-100"
+  }[testimony.mediaType] || "text-slate-500";
 
   return (
     <motion.div
@@ -32,23 +36,17 @@ export const TestimonyCard = ({ testimony, onClick }: TestimonyCardProps) => {
     >
       {/* Header / Thumbnail */}
       <div className="relative">
-        {testimony.type === "video" && testimony.thumbnail ? (
+        {testimony.mediaType === "video" && testimony.mediaUrl ? (
           <div className="aspect-video relative overflow-hidden">
-            <Image
-              src={testimony.thumbnail}
-              alt={testimony.title}
-              fill
-              className="object-cover group-hover:scale-105 transition-transform duration-700"
-              unoptimized
-            />
+            {/* Note: Thumbnail handling would require a separate field or extracting from video */}
+            <div className="w-full h-full bg-slate-900 flex items-center justify-center">
+                <Play className="w-12 h-12 text-white opacity-80" />
+            </div>
             <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors flex items-center justify-center">
               <div className="w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                 <Play className="w-5 h-5 text-slate-900 ml-1" fill="currentColor" />
               </div>
             </div>
-            <span className="absolute bottom-3 right-3 bg-black/70 text-white text-xs font-bold px-2 py-1 rounded-md">
-              {testimony.duration}
-            </span>
           </div>
         ) : (
           <div className={cn("h-24 p-6 flex items-center gap-4 border-b border-slate-50", colorClass)}>
@@ -57,7 +55,7 @@ export const TestimonyCard = ({ testimony, onClick }: TestimonyCardProps) => {
             </div>
             <div>
               <span className="text-xs font-bold uppercase tracking-wider opacity-70">
-                {testimony.type === "text" ? "Témoignage Écrit" : "Témoignage Audio"}
+                {testimony.mediaType === "ecrit" ? "Témoignage Écrit" : `Témoignage ${testimony.mediaType}`}
               </span>
               <h3 className="font-bold text-lg leading-tight line-clamp-1">{testimony.title}</h3>
             </div>
@@ -67,17 +65,17 @@ export const TestimonyCard = ({ testimony, onClick }: TestimonyCardProps) => {
 
       {/* Content Body */}
       <div className="p-6 flex-1 flex flex-col gap-4">
-        {testimony.type === "video" && (
+        {testimony.mediaType === "video" && (
            <h3 className="font-bold text-lg leading-tight line-clamp-2 mb-2">{testimony.title}</h3>
         )}
 
-        {testimony.type === "text" && (
+        {testimony.mediaType === "ecrit" && (
           <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed line-clamp-4 flex-1">
-            &quot;{testimony.content}&quot;
+            &quot;{testimony.contentText}&quot;
           </p>
         )}
 
-        {testimony.type === "audio" && (
+        {testimony.mediaType === "audio" && (
           <div className="flex-1 flex items-center justify-center">
              <div className="w-full">
                 <p className="text-slate-500 text-sm mb-3 line-clamp-2">{testimony.title}</p>
@@ -101,30 +99,14 @@ export const TestimonyCard = ({ testimony, onClick }: TestimonyCardProps) => {
         {/* Footer: Author & Meta */}
         <div className="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            {testimony.author.avatar ? (
-              <div className="w-8 h-8 relative">
-                <Image
-                  src={testimony.author.avatar}
-                  alt={testimony.author.name}
-                  fill
-                  className="rounded-full object-cover ring-2 ring-white dark:ring-slate-900"
-                  unoptimized
-                />
-              </div>
-            ) : (
-              <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
+            <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
                 <User className="w-4 h-4" />
-              </div>
-            )}
+            </div>
             <div>
-              <p className="text-xs font-bold text-slate-900 dark:text-white">{testimony.author.name}</p>
-              <p className="text-[10px] text-slate-500">{testimony.date}</p>
+              <p className="text-xs font-bold text-slate-900 dark:text-white">{testimony.authorName}</p>
+              <p className="text-[10px] text-slate-500">{new Date(testimony.createdAt).toLocaleDateString()}</p>
             </div>
           </div>
-          
-          <span className="text-xs font-medium px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded-md text-slate-600 dark:text-slate-400">
-             {testimony.category}
-          </span>
         </div>
       </div>
     </motion.div>
