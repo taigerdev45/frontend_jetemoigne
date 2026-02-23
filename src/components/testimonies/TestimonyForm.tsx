@@ -73,7 +73,7 @@ export const TestimonyForm = () => {
 
   const prevStep = () => setStep((s) => s - 1);
 
-  const onSubmit = async (data: TestimonyFormValues) => {
+  const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
     try {
       const formData = new FormData();
