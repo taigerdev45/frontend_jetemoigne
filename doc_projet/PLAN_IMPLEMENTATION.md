@@ -85,8 +85,11 @@ Ce document détaille chaque étape technique pour la réalisation de la platefo
 ## Phase 3 : Interface Admin (Blue Control)
 
 ### 3.1 Authentification & Sécurité Admin
-- [ ] Page de Login : Design professionnel, validation forte.
-- [ ] Protection des routes : Middlewares Next.js pour vérifier les rôles (is_staff).
+- [x] Page de Login : Design professionnel avec affichage/masquage mot de passe, redirection post-login.
+- [x] Protection des routes : `proxy.ts` (Next.js 16) serveur-side + garde client dans le layout.
+- [x] Sidebar déconnexion : bouton logout branché sur `useAuth().logout()`.
+- [x] Header admin : affichage du vrai utilisateur connecté (email + rôle).
+- [x] Fix build Vercel : `useSearchParams` isolé dans `<Suspense>`, convention `proxy.ts`.
 - [ ] Setup 2FA : Intégration de la double authentification pour les rôles sensibles.
 
 ### 3.2 Dashboard & Statistiques

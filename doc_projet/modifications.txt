@@ -397,3 +397,52 @@ Prochaine étape : Backend Integration & Auth.
 ### 2. Adaptation Frontend
 - **DonationForm.tsx :** Remplacement de l'URL hardcodée http://localhost:3001 par process.env.NEXT_PUBLIC_API_URL (avec fallback sur l'URL de production).
 - **Validation :** Le formulaire de don pointe désormais vers l'instance de production pour les tests d'intégration réels.
+
+### [Date: 2026-02-23] - Sécurisation Admin & Corrections Build Vercel
+
+#### Pourquoi
+- L'interface admin n'était pas protégée côté serveur (uniquement un garde client-side via useEffect).
+- Vercel échouait au build avec deux erreurs bloquantes :
+  1. `useSearchParams()` utilisé directement dans la page /admin/login sans `<Suspense>` (requis par Next.js pour le prerendering statique).
+  2. Fichier `middleware.ts` déprécié : Next.js 16 a renommé la convention en `proxy.ts` avec export `proxy()`.
+
+#### Comment
+
+1. **Protection serveur-side (`src/proxy.ts`)** :
+   - Création du fichier `proxy.ts` (convention Next.js 16, remplace `middleware.ts`).
+   - Export de la fonction `proxy()` (plus `middleware()`).
+   - Logique : lecture du cookie HttpOnly `auth-token` avant tout rendu JS.
+   - Routes non-auth → redirect vers `/admin/login?from=<chemin>`.
+   - Login déjà auth → redirect vers `/admin`.
+
+2. **Fix `useSearchParams` (`src/app/admin/login/page.tsx`)** :
+   - Extraction du formulaire dans un composant `<LoginForm>` interne.
+   - `useSearchParams()` déplacé dans ce composant enfant.
+   - Page parente enveloppe `<LoginForm>` dans un `<Suspense>` avec fallback spinner.
+   - Récupération du paramètre `?from=` pour rediriger après connexion.
+
+3. **Sidebar (`src/components/admin/Sidebar.tsx`)** :
+   - Bouton déconnexion branché sur `useAuth().logout()` (était inerte).
+   - Affichage de l'email et du rôle réel de l'utilisateur connecté.
+   - Active state corrigé pour les sous-pages.
+
+4. **Header (`src/components/admin/Header.tsx`)** :
+   - Suppression du nom hardcodé "Admin User / Super Admin".
+   - Affichage du vrai email + rôle via `useAuth()`.
+   - Avatar avec initiales générées dynamiquement depuis l'email.
+
+5. **Hook `useAuth` (`src/hooks/useAuth.ts`)** :
+   - `login()` accepte un 3ème paramètre `redirectTo` (défaut `/admin`).
+   - Permet la redirection vers la page demandée après connexion.
+
+#### Fichiers modifiés
+- `src/proxy.ts` (nouveau — remplace middleware.ts)
+- `src/app/admin/login/page.tsx`
+- `src/app/admin/layout.tsx`
+- `src/components/admin/Sidebar.tsx`
+- `src/components/admin/Header.tsx`
+- `src/hooks/useAuth.ts`
+
+#### Résultat
+- Build Vercel : ✓ 23/23 pages générées sans erreur.
+- Protection admin : double couche (proxy serveur + garde client).
