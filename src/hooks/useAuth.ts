@@ -10,7 +10,7 @@ interface UseAuthReturn {
   token: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string, redirectTo?: string) => Promise<void>;
   logout: () => Promise<void>;
   error: string | null;
 }
@@ -50,7 +50,7 @@ export function useAuth(): UseAuthReturn {
   }
 
   const login = useCallback(
-    async (email: string, password: string) => {
+    async (email: string, password: string, redirectTo = "/admin") => {
       setError(null);
       setIsLoading(true);
       try {
@@ -69,7 +69,7 @@ export function useAuth(): UseAuthReturn {
         setUser(data.user);
         // Recuperer le token via /me apres le login
         await checkAuth();
-        router.push("/admin");
+        router.push(redirectTo);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Erreur de connexion");
         throw err;
