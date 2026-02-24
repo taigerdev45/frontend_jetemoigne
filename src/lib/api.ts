@@ -33,7 +33,7 @@ const API_URL =
   process.env.NEXT_PUBLIC_API_URL ||
   "https://backend-jetemoigne-458j.onrender.com";
 
-// --- Token store (en memoire, alimente par useAuth) ---
+// --- Token store (en mémoire, alimenté par useAuth) ---
 let _authToken: string | null = null;
 
 export function setAuthToken(token: string | null) {
@@ -44,7 +44,25 @@ export function getAuthToken(): string | null {
   return _authToken;
 }
 
-// --- Fetch generique ---
+/**
+ * Détermine si l'appel doit passer par le proxy Next.js.
+ *
+ * Règle : si on est dans le navigateur (typeof window !== 'undefined'),
+ * on passe TOUJOURS par /api/proxy pour éviter le CORS.
+ * Le proxy Next.js lit lui-même le cookie HttpOnly et injecte le Bearer.
+ *
+ * Si on est côté serveur (SSR/RSC), on appelle directement le backend.
+ */
+function buildUrl(endpoint: string): string {
+  if (typeof window !== "undefined") {
+    // Côté navigateur → proxy Next.js (server-to-server, pas de CORS)
+    return `/api/proxy${endpoint}`;
+  }
+  // Côté serveur → appel direct
+  return `${API_URL}/api/v1${endpoint}`;
+}
+
+// --- Fetch générique ---
 async function fetchAPI<T>(
   endpoint: string,
   options: RequestInit = {}
@@ -54,18 +72,20 @@ async function fetchAPI<T>(
     ...(options.headers as Record<string, string>),
   };
 
-  // Injecter le token JWT si disponible
-  const token = _authToken;
-  if (token && !headers["Authorization"]) {
-    headers["Authorization"] = `Bearer ${token}`;
+  // Injecter le token JWT uniquement en SSR (côté navigateur, le proxy le gère)
+  if (typeof window === "undefined") {
+    const token = _authToken;
+    if (token && !headers["Authorization"]) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
   }
 
-  // Laisser le navigateur gerer le Content-Type pour FormData
+  // Laisser le navigateur gérer le Content-Type pour FormData
   if (options.body instanceof FormData) {
     delete headers["Content-Type"];
   }
 
-  const response = await fetch(`${API_URL}/api/v1${endpoint}`, {
+  const response = await fetch(buildUrl(endpoint), {
     ...options,
     headers,
   });
